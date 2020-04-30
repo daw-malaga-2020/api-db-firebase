@@ -1,4 +1,4 @@
-"use strict"
+'use strict'
 
 const express = require('express')
 const faker = require('faker')
@@ -25,11 +25,13 @@ app.route('/users')
     let nextId = userList.length + 1
 
     let newUserInfo = {
-      "id": nextId
+      'id': nextId,
+      'fistname': req.body.firstname,
+      'lastname': req.body.lastname,
+      'email': req.body.email
     }
 
-    newUserInfo = { ...newUserInfo, ...req.body }
-
+    //newUserInfo = { ...newUserInfo, ...req.body }
 
     userList.push(newUserInfo)
 
@@ -43,7 +45,7 @@ app.route('/users/:userId')
     let foundUser = userList.find(user => user.id == userId)
 
     if (!foundUser) {
-      res.status(404).json({ "message": "Usuario con id " + userId + " no encontrado" })
+      res.status(404).json({ 'message': 'Usuario con id ' + userId + ' no encontrado' })
     }
 
     res.json(foundUser)
@@ -54,7 +56,7 @@ app.route('/users/:userId')
     let foundIndexUser = userList.findIndex(user => user.id == userId)
 
     if (foundIndexUser === -1) {
-      res.status(404).json({ "message": "Usuario con id " + userId + " no encontrado" })
+      res.status(404).json({ 'message': 'Usuario con id ' + userId + ' no encontrado' })
       return
     }
 
@@ -72,7 +74,7 @@ app.route('/users/:userId')
     let foundIndexUser = userList.findIndex(user => user.id == userId)
 
     if (foundIndexUser === -1) {
-      res.status(404).json({ "message": "Usuario con id " + userId + " no encontrado" })
+      res.status(404).json({ 'message': 'Usuario con id ' + userId + ' no encontrado' })
       return
     }
 
