@@ -3,6 +3,12 @@
 const config = require('../config')
 const defaultUserProfile = 'user'
 
+//ejemplos de llamada al middleware configurable
+//authenticationVerify('admin',true)
+//authenticationVerify(['admin'],true)
+//authenticationVerify(['admin', 'moderator'],true)
+//authenticationVerify(['admin', 'moderator'])
+
 function authenticationVerify(allowedProfiles, authRequired = true) {
   return (req, res, next) => {
     //el middleware guarda la informaicón del usuario logado en la petición para ser usada DESPUÉS POR LA APP
@@ -20,7 +26,7 @@ function authenticationVerify(allowedProfiles, authRequired = true) {
     jwt.verify(req.token, config.APP_SECRET, (err, tokenData) => {
 
       if (err) {
-        res.status(403).json({ 'message': 'El token recibido no es válido' })
+        res.status(403).json({ 'message': 'La sesión ha sido cerrado. Identifícate de nuevo.' })
       }
 
       let userProfile = tokenData.profile || defaultUserProfile

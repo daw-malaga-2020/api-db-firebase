@@ -32,7 +32,6 @@ router.route('/orders')
     itemList.push(newItem)
     req.app.set('orders', itemList)
 
-
     res.status(201).json(newItem)
   })
 

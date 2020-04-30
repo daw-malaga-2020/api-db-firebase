@@ -10,7 +10,7 @@ if (process.env.NODE_ENV !== 'production') {
 
   const envs = result.parsed
 
-
+  module.exports = envs
 } else {
   module.exports = process.env
 }

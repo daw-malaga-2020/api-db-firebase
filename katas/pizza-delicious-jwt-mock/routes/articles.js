@@ -12,14 +12,13 @@ router.route('/articles')
     res.json(itemList)
   })
   .post(methodAllowedOnlyForAdmins, (req, res) => {
-
+    //REQUEST >> bearerToken >> express.json >> methodAllowedOnlyForAdmins >> propio middleware de la ruta >> RESPONSE
     let itemList = req.app.get('articles')
 
     let newItem = { ...{ id: itemList.length + 1 }, ...req.body }
 
     itemList.push(newItem)
     req.app.set('articles', itemList)
-
 
     res.status(201).json(newItem)
   })

@@ -3,6 +3,7 @@
 //dependencias usadas
 const express = require('express')
 const bearerToken = require('express-bearer-token')
+const cors = require('cors')
 
 //instancia de express
 const app = express()
@@ -10,6 +11,7 @@ const app = express()
 //configuramos middlewares usados
 app.use(bearerToken())
 app.use(express.json())
+app.use(cors())
 
 //traemos las rutas de ficheros externos
 const productsRoutes = require('./routes/products')
@@ -53,5 +55,5 @@ app.use(articlesRoutes)
 app.use(ordersRoutes)
 app.use(contactsRoutes)
 
-//exponemos la instancia configurada de la app
+//exponemos la instancia configurada de la app (para que quien importe este fichero haga lo que necesite con la instancia)
 module.exports = app

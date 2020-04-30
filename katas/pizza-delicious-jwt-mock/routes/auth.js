@@ -30,9 +30,8 @@ router.route('/auth/login')
     })
 
     if(!generatedToken){
-      res.status(500).json({ 'message': 'No ha sido posible generar el token. Inténtalo más tarde' })
+      res.status(500).json({ 'message': 'No ha sido posible iniciar sesión con el usuario. Inténtalo más tarde' })
     }
-
 
     res.json({ 'token': generatedToken })
   })
