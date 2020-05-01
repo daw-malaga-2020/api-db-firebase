@@ -19,22 +19,6 @@ router.route('/users')
   })
   .post((req, res) => {
 
-
-    /*if (!req.token) {
-      res.status(403).json({ 'message': 'Debes estar autenticado para usar este método' })
-      return
-    }
-
-    jwt.verify(req.token, "asldfkjasidowe", (err, tokenData) => {
-
-      if (err) {
-        res.status(403).json({ 'message': 'El token recibido no es válido' })
-      }
-
-      if (tokenData.profile !== 'admin') {
-        res.status(403).json({ 'message': 'No tienes permisos suficientes' })
-      }*/
-
       let userList = req.app.get('users')
 
       let newItem = { ...{ id: userList.length + 1 }, ...req.body }
@@ -50,8 +34,6 @@ router.route('/users')
       delete clonedItem.password
 
       res.status(201).json(clonedItem)
-
-    //})
 
 
   })

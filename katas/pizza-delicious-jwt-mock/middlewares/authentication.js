@@ -1,6 +1,7 @@
 'use strict'
 
-const config = require('../config')
+const config = require('../modules/config')
+const jwt = require('jsonwebtoken')
 const defaultUserProfile = 'user'
 
 //ejemplos de llamada al middleware configurable
@@ -33,6 +34,7 @@ function authenticationVerify(allowedProfiles, authRequired = true) {
 
       if (!isAllowedProfile(userProfile, allowedProfiles)) {
         res.status(403).json({ 'message': 'No tienes permisos suficientes' })
+        return
       }
 
       //guarda la información del token en

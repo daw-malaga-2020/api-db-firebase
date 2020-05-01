@@ -24,10 +24,10 @@ Para más información sobre generación de ids/uuids buscar 'uuid npm' (ej. htt
 
 la dependencia slugify permite generar lo que se conocen como 'slugs'. Dado que el identificador viene de la URL y esta debe ser comprensible y recordable por el usuario que la usa, para acceder a recursos que deben ser compartidos se accederá mediante un slug en lugar de su identificador interno. Ver más información aquí: https://www.ondho.com/que-es-slug-como-crearlo/
 
-De momento para hacer test con diferentes niveles de usuarios no hay test automáticos, habrá que probar manualmente con tokens con diferentes niveles de usuario (user y admin).
+El set de test por recurso es un "very happy path" para poder montar con un mínimo de fiabilidad de manera autónoma el ejercicio.
 
-Los métodos DELETE /orders y PUT /contacts/:id no existen dado que el diseño de la API así lo prohible. Se podría haber creado 2 test en concreto que verificaran que al llamar a esos métodos devuelve sendos errores 404.
+Para hacerlo por cuenta propia, borrar el contenido al completo de app.js y carpeta routes y comenzar de 0.
 
-Se ha limitado mediante un middleware configurable el acceso a diferentes métodos pero únicamente en aquellos que haga falta. El middleware permite interceptar la petición, comprobar si es necesario que haya un usuario autenticado (reciba un token) y que el perfil que tiene es uno de los permitidos para dicha acción.
+Los métodos DELETE /orders y PUT /contacts/:id no existen dado que el diseño de la API así lo prohible. Se podría haber creado 2 test en concreto que verificaran que al llamar a esos métodos devuelve sendos errores 404
 
 El envío de correos se realiza mediante nodemailer usando emails de prueba generados dinámicamente con un servicio externo. Los emails no son enviados realmente pero pueden ser previsualizados en el terminal una vez se ha ejecutado un envío.
