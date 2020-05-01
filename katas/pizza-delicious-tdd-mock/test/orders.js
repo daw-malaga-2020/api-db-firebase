@@ -135,29 +135,30 @@ describe('orders', () => {
           done()
         })
     })
-  })
 
-  it('changing status Should return status 200 and json as default data format', (done) => {
+    it('changing status Should return status 200 and json as default data format', (done) => {
 
-    editedItemStatusRef = modifyItemStatus(newItemRef)
+      editedItemStatusRef = modifyItemStatus(newItemRef)
 
-    chai.request(app)
-      .put('/orders/' + newItemRef.id+'/status')
-      .send(editedItemRef)
-      .end((err, res) => {
+      chai.request(app)
+        .put('/orders/' + newItemRef.id + '/status')
+        .send(editedItemStatusRef)
+        .end((err, res) => {
 
-        if (err) {
-          console.error(err)
+          if (err) {
+            console.error(err)
+            done()
+          }
+
+          expect(res).to.have.status(200)
+          expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+          expect(res.body).to.have.property('status').to.be.equal(editedItemStatusRef.status)
+
           done()
-        }
-
-        expect(res).to.have.status(200)
-        expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
-        expect(res.body).to.have.property('status').to.be.equal(editedItemStatusRef.status)
-
-        done()
-      })
+        })
+    })
   })
+
 })
 
 function createNewItem() {
@@ -204,7 +205,9 @@ function createNewItem() {
 function modifyItemStatus(item) {
   let statusList = [2, 3] //1 pending, 2 shipped, 3 cancelled
 
-  return faker.random.arrayElement(statusList)
+  let statusItem = { status: faker.random.arrayElement(statusList) }
+
+  return statusItem
 }
 
 function modifyItem(item) {
