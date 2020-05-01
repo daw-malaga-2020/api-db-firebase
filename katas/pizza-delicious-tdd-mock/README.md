@@ -29,3 +29,5 @@ El set de test por recurso es un "very happy path" para poder montar con un mín
 Para hacerlo por cuenta propia, borrar el contenido al completo de app.js y carpeta routes y comenzar de 0.
 
 Los métodos DELETE /orders y PUT /contacts/:id no existen dado que el diseño de la API así lo prohible. Se podría haber creado 2 test en concreto que verificaran que al llamar a esos métodos devuelve sendos errores 404
+
+El envío de correos se realiza mediante nodemailer usando emails de prueba generados dinámicamente con un servicio externo. Los emails no son enviados realmente pero pueden ser previsualizados en el terminal una vez se ha ejecutado un envío.
