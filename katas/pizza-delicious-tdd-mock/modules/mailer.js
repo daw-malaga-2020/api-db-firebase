@@ -4,23 +4,30 @@ const nodemailer = require("nodemailer")
 
 class Mailer {
   constructor(){
-    nodemailer.createTestAccount().then((data) => {
+    this.testAccount = null
+    this.transporter = null
+  }
 
-      this.testAccount = data
+  async initialize(){
+    this.testAccount = await nodemailer.createTestAccount()
 
-      this.transporter = nodemailer.createTransport({
-        host: "smtp.ethereal.email",
-        port: this.testAccount.smtp.port,
-        secure: this.testAccount.smtp.secure, // true for 465, false for other ports
-        auth: {
-          user: this.testAccount.user, // generated ethereal user
-          pass: this.testAccount.pass // generated ethereal password
-        }
-      });
-    })
+    this.transporter = nodemailer.createTransport({
+      host: "smtp.ethereal.email",
+      port: this.testAccount.smtp.port,
+      secure: this.testAccount.smtp.secure,
+      auth: {
+        user: this.testAccount.user, // generated ethereal user
+        pass: this.testAccount.pass // generated ethereal password
+      }
+    });
   }
 
   async send(to, subject, body, asHTMLBody = true){
+    //inicializa el mailer si no se ha hecho anteriormente
+    if(!this.testAccount || ! this.transporter){
+      await this.initialize()
+    }
+
     let emailItem = {
       from: '"Fred Foo 👻" <foo@example.com>', // sender address
       to: to,
@@ -45,6 +52,9 @@ class Mailer {
   }
 
 }
+
+let mailer = new Mailer()
+
 
 
 module.exports = new Mailer()
