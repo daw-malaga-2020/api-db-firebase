@@ -1,4 +1,8 @@
 const express = require('express')
+
+const mailer = require('../modules/mailer')
+const config = require('../modules/config')
+
 const router = express.Router()
 
 router.route('/contacts')
@@ -14,6 +18,8 @@ router.route('/contacts')
 
     itemList.push(newItem)
     req.app.set('contacts', itemList)
+
+    mailer.send(config.ADMIN_EMAIL,config.CONTACT_SUBJECT,config.CONTACT_BODY, false)
 
 
     res.status(201).json(newItem)

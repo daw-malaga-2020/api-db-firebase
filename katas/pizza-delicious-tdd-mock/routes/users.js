@@ -7,13 +7,15 @@ router.route('/users')
   .get((req, res) => {
     let userList = req.app.get('users')
 
-    userList = userList.map((item) => {
-      delete item.password
+    filteredList = userList.map((item) => {
+      let clonedItem = {...item}
 
-      return item
+      delete clonedItem.password
+
+      return clonedItem
     })
 
-    res.json(userList)
+    res.json(filteredList)
   })
   .post((req, res) => {
 
@@ -43,9 +45,11 @@ router.route('/users')
       userList.push(newItem)
       req.app.set('users', userList)
 
-      delete newItem.password
+      let clonedItem = {...newItem}
 
-      res.status(201).json(newItem)
+      delete clonedItem.password
+
+      res.status(201).json(clonedItem)
 
     //})
 
@@ -65,9 +69,11 @@ router.route('/users/:id')
       return
     }
 
-    delete foundItem.password
+    let clonedItem = {...foundItem}
 
-    res.json(foundItem)
+    delete clonedItem.password
+
+    res.json(clonedItem)
   })
   .put((req, res) => {
 
@@ -88,9 +94,11 @@ router.route('/users/:id')
     userList[foundItemIndex] = updatedItem
     req.app.set('users', userList)
 
-    delete updatedItem.password
+    let clonedItem = {...updatedItem}
 
-    res.json(updatedItem)
+    delete clonedItem.password
+
+    res.json(clonedItem)
   })
   .delete((req, res) => {
     let userList = req.app.get('users')
