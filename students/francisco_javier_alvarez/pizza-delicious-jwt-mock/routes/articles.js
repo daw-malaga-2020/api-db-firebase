@@ -1,28 +1,32 @@
 const express = require('express')
 const router = express.Router()
+//middleware configurable para autenticación
+const authMiddleware = require('../middlewares/authentication')
 
-router.route('/orders')
+//middleware configurable para usar el método sólo administradores
+const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
+
+router.route('/articles')
   .get((req, res) => {
-    let itemList = req.app.get('orders')
+    let itemList = req.app.get('articles')
     res.json(itemList)
   })
-  .post((req, res) => {
-
-    let itemList = req.app.get('orders')
+  .post(methodAllowedOnlyForAdmins, (req, res) => {
+    //REQUEST >> bearerToken >> express.json >> methodAllowedOnlyForAdmins >> propio middleware de la ruta >> RESPONSE
+    let itemList = req.app.get('articles')
 
     let newItem = { ...{ id: itemList.length + 1 }, ...req.body }
 
     itemList.push(newItem)
-    req.app.set('orders', itemList)
-
+    req.app.set('articles', itemList)
 
     res.status(201).json(newItem)
   })
 
-router.route('/orders/:id')
+router.route('/articles/:id')
   .get((req, res) => {
 
-    let itemList = req.app.get('orders')
+    let itemList = req.app.get('articles')
     let searchId = parseInt(req.params.id)
 
     let foundItem = itemList.find(item => item.id === searchId)
@@ -34,9 +38,9 @@ router.route('/orders/:id')
 
     res.json(foundItem)
   })
-  .put((req, res) => {
+  .put(methodAllowedOnlyForAdmins,(req, res) => {
 
-    let itemList = req.app.get('orders')
+    let itemList = req.app.get('articles')
     let searchId = parseInt(req.params.id)
 
     let foundItemIndex = itemList.findIndex(item => item.id === searchId)
@@ -51,32 +55,26 @@ router.route('/orders/:id')
     updatedItem = { ...updatedItem, ...req.body }
 
     itemList[foundItemIndex] = updatedItem
-    req.app.set('orders', itemList)
+    req.app.set('articles', itemList)
 
     res.json(updatedItem)
   })
+  .delete(methodAllowedOnlyForAdmins,(req, res) => {
 
-router.route('/orders/:id/status')
-  .put((req, res) => {
-
-    let itemList = req.app.get('orders')
+    let itemList = req.app.get('articles')
     let searchId = parseInt(req.params.id)
 
     let foundItemIndex = itemList.findIndex(item => item.id === searchId)
 
     if (foundItemIndex === -1) {
-      res.status(404).json({ 'message': 'El elemento que intentas editar no existe' })
+      res.status(404).json({ 'message': 'El elemento que intentas eliminar no existe' })
       return
     }
 
-    let updatedItem = itemList[foundItemIndex]
+    itemList.splice(foundItemIndex, 1)
+    req.app.get('articles', itemList)
 
-    updatedItem.status = req.body.status
-
-    itemList[foundItemIndex] = updatedItem
-    req.app.set('orders', itemList)
-
-    res.json({status: updatedItem.status})
+    res.status(204).json()
   })
 
 module.exports = router

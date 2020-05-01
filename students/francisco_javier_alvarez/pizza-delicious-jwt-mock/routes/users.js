@@ -13,15 +13,13 @@ router.route('/users')
   .get(methodAllowedOnlyForAdmins, (req, res) => {
     let userList = req.app.get('users')
 
-    filteredList = userList.map((item) => {
-      let clonedItem = { ...item }
+    userList = userList.map((item) => {
+      delete item.password
 
-      delete clonedItem.password
-
-      return clonedItem
+      return item
     })
 
-    res.json(filteredList)
+    res.json(userList)
   })
   .post(methodAllowedForUsersAndAdmins, (req, res) => {
 
@@ -35,11 +33,9 @@ router.route('/users')
     userList.push(newItem)
     req.app.set('users', userList)
 
-    let clonedItem = { ...newItem }
+    delete newItem.password
 
-    delete clonedItem.password
-
-    res.status(201).json(clonedItem)
+    res.status(201).json(newItem)
 
   })
 
@@ -60,11 +56,9 @@ router.route('/users/:id')
       return
     }
 
-    let clonedItem = {...foundItem}
+    delete foundItem.password
 
-    delete clonedItem.password
-
-    res.json(clonedItem)
+    res.json(foundItem)
   })
   .put(methodAllowedForUsersAndAdmins, (req, res) => {
 
@@ -89,11 +83,9 @@ router.route('/users/:id')
     userList[foundItemIndex] = updatedItem
     req.app.set('users', userList)
 
-    let clonedItem = {...updatedItem}
+    delete updatedItem.password
 
-    delete clonedItem.password
-
-    res.json(clonedItem)
+    res.json(updatedItem)
   })
   .delete(methodAllowedForUsersAndAdmins, (req, res) => {
     let userList = req.app.get('users')

@@ -7,31 +7,17 @@ router.route('/users')
   .get((req, res) => {
     let userList = req.app.get('users')
 
-    userList = userList.map((item) => {
-      delete item.password
+    filteredList = userList.map((item) => {
+      let clonedItem = {...item}
 
-      return item
+      delete clonedItem.password
+
+      return clonedItem
     })
 
-    res.json(userList)
+    res.json(filteredList)
   })
   .post((req, res) => {
-
-
-    /*if (!req.token) {
-      res.status(403).json({ 'message': 'Debes estar autenticado para usar este método' })
-      return
-    }
-
-    jwt.verify(req.token, "asldfkjasidowe", (err, tokenData) => {
-
-      if (err) {
-        res.status(403).json({ 'message': 'El token recibido no es válido' })
-      }
-
-      if (tokenData.profile !== 'admin') {
-        res.status(403).json({ 'message': 'No tienes permisos suficientes' })
-      }*/
 
       let userList = req.app.get('users')
 
@@ -43,11 +29,11 @@ router.route('/users')
       userList.push(newItem)
       req.app.set('users', userList)
 
-      delete newItem.password
+      let clonedItem = {...newItem}
 
-      res.status(201).json(newItem)
+      delete clonedItem.password
 
-    //})
+      res.status(201).json(clonedItem)
 
 
   })
@@ -65,9 +51,11 @@ router.route('/users/:id')
       return
     }
 
-    delete foundItem.password
+    let clonedItem = {...foundItem}
 
-    res.json(foundItem)
+    delete clonedItem.password
+
+    res.json(clonedItem)
   })
   .put((req, res) => {
 
@@ -88,9 +76,11 @@ router.route('/users/:id')
     userList[foundItemIndex] = updatedItem
     req.app.set('users', userList)
 
-    delete updatedItem.password
+    let clonedItem = {...updatedItem}
 
-    res.json(updatedItem)
+    delete clonedItem.password
+
+    res.json(clonedItem)
   })
   .delete((req, res) => {
     let userList = req.app.get('users')
