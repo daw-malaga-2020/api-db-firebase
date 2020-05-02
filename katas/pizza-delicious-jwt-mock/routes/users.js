@@ -23,7 +23,7 @@ router.route('/users')
 
     res.json(filteredList)
   })
-  .post(methodAllowedForUsersAndAdmins, (req, res) => {
+  .post((req, res) => {
 
     let userList = req.app.get('users')
 
@@ -74,7 +74,7 @@ router.route('/users/:id')
     let foundItemIndex = userList.findIndex(item => item.id === searchId)
 
     if (req.user.profile !== 'admin') {
-      foundItemIndex = userList.find(item => item.id === searchId && item.id === req.user.id)
+      foundItemIndex = userList.findIndex(item => item.id === searchId && item.id === req.user.id)
     }
 
     if (foundItemIndex === -1) {
@@ -83,6 +83,8 @@ router.route('/users/:id')
     }
 
     let updatedItem = userList[foundItemIndex]
+
+    delete req.body.id //evita que el id enviado como parte de los datos modifique el id del usuario
 
     updatedItem = { ...updatedItem, ...req.body }
 
@@ -102,7 +104,7 @@ router.route('/users/:id')
     let foundItemIndex = userList.findIndex(item => item.id === searchId)
 
     if (req.user.profile !== 'admin') {
-      foundItemIndex = userList.find(item => item.id === searchId && item.id === req.user.id)
+      foundItemIndex = userList.findIndex(item => item.id === searchId && item.id === req.user.id)
     }
 
     if (foundItemIndex === -1) {

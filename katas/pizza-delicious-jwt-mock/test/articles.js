@@ -1,15 +1,10 @@
 'use strict'
 
-//tokens por perfiles alex user, juanma admin
-const tokens = {
-  user: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiQWxleCIsInByb2ZpbGUiOiJ1c2VyIiwiaWF0IjoxNTg4MzMyOTg4LCJleHAiOjE2MTk4Njg5ODh9.QidBSFS0LL_85L1tGQnScZf5eQ7Wu52llUdIlTReRTc',
-  admin: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiSnVhbiBNYW51ZWwiLCJwcm9maWxlIjoiYWRtaW4iLCJpYXQiOjE1ODgzMzI5NTQsImV4cCI6MTYxOTg2ODk1NH0.IPcsecVdqCMDGeu4OF17Asr5LR25kBNIxED0IGeR3VM'
-}
-
 const faker = require('faker')
 const slugify = require('slugify')
 
 let app = require('../app.js')
+let tokens = require('./conf/tokens')
 
 const chai = require('chai')
 const chaiHttp = require('chai-http')
@@ -22,148 +17,397 @@ let editedItemRef = null
 
 describe('articles', () => {
   describe('LIST', () => {
+    describe('AS ANONYMOUS', () => {
+      it('Should return status 200 and json as default data format', (done) => {
 
-    it('Should return status 200 and json as default data format', (done) => {
+        chai.request(app)
+          .get('/articles')
+          .end((err, res) => {
 
-      chai.request(app)
-        .get('/articles')
-        .end((err, res) => {
+            //1. comprobamos
+            expect(res).to.have.status(200)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.be.an('array')
 
-          //1. comprobamos
-          expect(res).to.have.status(200)
-          expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
-          expect(res.body).to.be.an('array')
-
-          //2. marcamos como finalizado el test
-          done()
-        })
-
+            //2. marcamos como finalizado el test
+            done()
+          })
+      })
     })
 
+    describe('AS USER', () => {
+      it('Should return status 200 and json as default data format', (done) => {
+
+        chai.request(app)
+          .get('/articles')
+          .set('Authorization', tokens.user)
+          .end((err, res) => {
+
+            //1. comprobamos
+            expect(res).to.have.status(200)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.be.an('array')
+
+            //2. marcamos como finalizado el test
+            done()
+          })
+      })
+    })
+
+    describe('AS ADMIN', () => {
+      it('Should return status 200 and json as default data format', (done) => {
+
+        chai.request(app)
+          .get('/articles')
+          .set('Authorization', tokens.admin)
+          .end((err, res) => {
+
+            //1. comprobamos
+            expect(res).to.have.status(200)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.be.an('array')
+
+            //2. marcamos como finalizado el test
+            done()
+          })
+      })
+    })
 
   })
 
   describe('POST', () => {
 
-    it('Should return status 201 and json as default data format', (done) => {
+    describe('AS ANONYMOUS', () => {
+      it('Should return status 401 and json as default data format', (done) => {
 
-      newItemRef = createNewItem()
+        newItemRef = createNewItem()
 
-      chai.request(app)
-        .post('/articles')
-        .send(newItemRef)
-        .end((err, res) => {
+        chai.request(app)
+          .post('/articles')
+          .send(newItemRef)
+          .end((err, res) => {
 
-          if (err) {
-            console.error(err)
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            //1. comprobamos la respuesta
+            expect(res).to.have.status(401)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.have.property('message')
+
+            //2. marcamos como finalizado el test
             done()
-          }
+          })
+      })
+    })
 
-          //1. comprobamos la respuesta
-          expect(res).to.have.status(201)
-          expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
-          expect(res.body).to.have.property('id').to.be.greaterThan(0)
-          expect(res.body).to.have.property('title').to.be.equal(newItemRef.title)
-          expect(res.body).to.have.property('slug').to.be.equal(newItemRef.slug)
-          expect(res.body).to.have.property('excerpt').to.be.equal(newItemRef.excerpt)
-          expect(res.body).to.have.property('image').to.be.equal(newItemRef.image)
-          expect(res.body).to.have.property('publish_at')
-          expect(res.body).to.have.property('enabled').to.be.equal(newItemRef.enabled)
+    describe('AS USER', () => {
+      it('Should return status 403 and json as default data format', (done) => {
 
-          //2. guardamos el resultado para siguientes test
-          newItemRef = res.body
+        newItemRef = createNewItem()
 
-          //2. marcamos como finalizado el test
-          done()
-        })
+        chai.request(app)
+          .post('/articles')
+          .set('Authorization', tokens.user)
+          .send(newItemRef)
+          .end((err, res) => {
 
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            //1. comprobamos la respuesta
+            expect(res).to.have.status(403)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.have.property('message')
+
+            //2. marcamos como finalizado el test
+            done()
+          })
+      })
+    })
+
+    describe('AS ADMIN', () => {
+      it('Should return status 201 and json as default data format', (done) => {
+
+        newItemRef = createNewItem()
+
+        chai.request(app)
+          .post('/articles')
+          .set('Authorization', tokens.admin)
+          .send(newItemRef)
+          .end((err, res) => {
+
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            //1. comprobamos la respuesta
+            expect(res).to.have.status(201)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.have.property('id').to.be.greaterThan(0)
+            expect(res.body).to.have.property('title').to.be.equal(newItemRef.title)
+            expect(res.body).to.have.property('slug').to.be.equal(newItemRef.slug)
+            expect(res.body).to.have.property('excerpt').to.be.equal(newItemRef.excerpt)
+            expect(res.body).to.have.property('image').to.be.equal(newItemRef.image)
+            expect(res.body).to.have.property('publish_at')
+            expect(res.body).to.have.property('enabled').to.be.equal(newItemRef.enabled)
+
+            //2. guardamos el resultado para siguientes test
+            newItemRef = res.body
+
+            //2. marcamos como finalizado el test
+            done()
+          })
+      })
     })
 
 
   })
 
   describe('GET', () => {
-    it('Should return status 200 and json as default data format', (done) => {
+    describe('AS ANONYMOUS', () => {
+      it('Should return status 200 and json as default data format', (done) => {
 
-      chai.request(app)
-        .get('/articles/' + newItemRef.id)
-        .end((err, res) => {
+        chai.request(app)
+          .get('/articles/' + newItemRef.id)
+          .end((err, res) => {
 
-          if (err) {
-            console.error(err)
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            expect(res).to.have.status(200)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.have.property('id').to.be.equal(newItemRef.id)
+            expect(res.body).to.have.property('title').to.be.equal(newItemRef.title)
+            expect(res.body).to.have.property('slug').to.be.equal(newItemRef.slug)
+            expect(res.body).to.have.property('excerpt').to.be.equal(newItemRef.excerpt)
+            expect(res.body).to.have.property('image').to.be.equal(newItemRef.image)
+            expect(res.body).to.have.property('publish_at')
+            expect(res.body).to.have.property('enabled').to.be.equal(newItemRef.enabled)
+
             done()
-          }
-
-          expect(res).to.have.status(200)
-          expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
-          expect(res.body).to.have.property('id').to.be.equal(newItemRef.id)
-          expect(res.body).to.have.property('title').to.be.equal(newItemRef.title)
-          expect(res.body).to.have.property('slug').to.be.equal(newItemRef.slug)
-          expect(res.body).to.have.property('excerpt').to.be.equal(newItemRef.excerpt)
-          expect(res.body).to.have.property('image').to.be.equal(newItemRef.image)
-          expect(res.body).to.have.property('publish_at')
-          expect(res.body).to.have.property('enabled').to.be.equal(newItemRef.enabled)
-
-          done()
-        })
+          })
+      })
     })
+
+    describe('AS USER', () => {
+      it('Should return status 200 and json as default data format', (done) => {
+
+        chai.request(app)
+          .get('/articles/' + newItemRef.id)
+          .set('Authorization', tokens.user)
+          .end((err, res) => {
+
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            expect(res).to.have.status(200)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.have.property('id').to.be.equal(newItemRef.id)
+            expect(res.body).to.have.property('title').to.be.equal(newItemRef.title)
+            expect(res.body).to.have.property('slug').to.be.equal(newItemRef.slug)
+            expect(res.body).to.have.property('excerpt').to.be.equal(newItemRef.excerpt)
+            expect(res.body).to.have.property('image').to.be.equal(newItemRef.image)
+            expect(res.body).to.have.property('publish_at')
+            expect(res.body).to.have.property('enabled').to.be.equal(newItemRef.enabled)
+
+            done()
+          })
+      })
+    })
+
+    describe('AS ADMIN', () => {
+      it('Should return status 200 and json as default data format', (done) => {
+
+        chai.request(app)
+          .get('/articles/' + newItemRef.id)
+          .set('Authorization', tokens.admin)
+          .end((err, res) => {
+
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            expect(res).to.have.status(200)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.have.property('id').to.be.equal(newItemRef.id)
+            expect(res.body).to.have.property('title').to.be.equal(newItemRef.title)
+            expect(res.body).to.have.property('slug').to.be.equal(newItemRef.slug)
+            expect(res.body).to.have.property('excerpt').to.be.equal(newItemRef.excerpt)
+            expect(res.body).to.have.property('image').to.be.equal(newItemRef.image)
+            expect(res.body).to.have.property('publish_at')
+            expect(res.body).to.have.property('enabled').to.be.equal(newItemRef.enabled)
+
+            done()
+          })
+      })
+    })
+
   })
 
   describe('PUT', () => {
-    it('Should return status 200 and json as default data format', (done) => {
 
-      editedItemRef = modifyItem(newItemRef)
+    describe('AS ANONYMOUS', () => {
+      it('Should return status 401 and json as default data format', (done) => {
 
-      chai.request(app)
-        .put('/articles/' + newItemRef.id)
-        .send(editedItemRef)
-        .end((err, res) => {
+        editedItemRef = modifyItem(newItemRef)
 
-          if (err) {
-            console.error(err)
+        chai.request(app)
+          .put('/articles/' + newItemRef.id)
+          .send(editedItemRef)
+          .end((err, res) => {
+
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            expect(res).to.have.status(401)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.have.property('message')
+
             done()
-          }
+          })
+      })
+    })
 
-          expect(res).to.have.status(200)
-          expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
-          expect(res.body).to.have.property('id').to.be.equal(newItemRef.id)
-          expect(res.body).to.have.property('title').to.be.equal(newItemRef.title)
-          expect(res.body).to.have.property('slug').to.be.equal(newItemRef.slug)
-          expect(res.body).to.have.property('excerpt').to.be.equal(newItemRef.excerpt)
-          expect(res.body).to.have.property('image').to.be.equal(newItemRef.image)
-          expect(res.body).to.have.property('publish_at')
-          expect(res.body).to.have.property('enabled').to.be.equal(newItemRef.enabled)
+    describe('AS USER', () => {
+      it('Should return status 403 and json as default data format', (done) => {
 
-          done()
-        })
+        editedItemRef = modifyItem(newItemRef)
+
+        chai.request(app)
+          .put('/articles/' + newItemRef.id)
+          .set('Authorization', tokens.user)
+          .send(editedItemRef)
+          .end((err, res) => {
+
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            expect(res).to.have.status(403)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.have.property('message')
+
+            done()
+          })
+      })
+    })
+
+    describe('AS ADMIN', () => {
+      it('Should return status 200 and json as default data format', (done) => {
+
+        editedItemRef = modifyItem(newItemRef)
+
+        chai.request(app)
+          .put('/articles/' + newItemRef.id)
+          .set('Authorization', tokens.admin)
+          .send(editedItemRef)
+          .end((err, res) => {
+
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            expect(res).to.have.status(200)
+            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+            expect(res.body).to.have.property('id').to.be.equal(newItemRef.id)
+            expect(res.body).to.have.property('title').to.be.equal(newItemRef.title)
+            expect(res.body).to.have.property('slug').to.be.equal(newItemRef.slug)
+            expect(res.body).to.have.property('excerpt').to.be.equal(newItemRef.excerpt)
+            expect(res.body).to.have.property('image').to.be.equal(newItemRef.image)
+            expect(res.body).to.have.property('publish_at')
+            expect(res.body).to.have.property('enabled').to.be.equal(newItemRef.enabled)
+
+            done()
+          })
+      })
     })
   })
 
 
   describe('DELETE', () => {
-    it('Should return status 200 and json as default data format', function (done) {
 
-      chai.request(app)
-        .delete('/articles/' + newItemRef.id)
-        .end((err, res) => {
+    describe('AS ANONYMOUS', () => {
+      it('Should return status 401 and json as default data format', function (done) {
 
-          if (err) {
-            console.error(err)
+        chai.request(app)
+          .delete('/articles/' + newItemRef.id)
+          .end((err, res) => {
+
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            expect(res).to.have.status(401)
+            expect(res.body).to.have.property('message')
+
             done()
-          }
+          })
+      })
+    })
 
-          expect(res).to.have.status(204)
-          expect(res.body).to.be.empty
+    describe('AS USER', () => {
+      it('Should return status 403 and json as default data format', function (done) {
 
-          done()
-        })
+        chai.request(app)
+          .delete('/articles/' + newItemRef.id)
+          .set('Authorization',tokens.user)
+          .end((err, res) => {
+
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            expect(res).to.have.status(403)
+            expect(res.body).to.have.property('message')
+
+            done()
+          })
+      })
+    })
+
+    describe('AS ADMIN', () => {
+      it('Should return status 200 and json as default data format', function (done) {
+
+        chai.request(app)
+          .delete('/articles/' + newItemRef.id)
+          .set('Authorization',tokens.admin)
+          .end((err, res) => {
+
+            if (err) {
+              console.error(err)
+              done()
+            }
+
+            expect(res).to.have.status(204)
+            expect(res.body).to.be.empty
+
+            done()
+          })
+      })
     })
   })
 })
 
 function createNewItem() {
   let categoryList = ['Novedades', 'Ofertas', 'Gastronomía', 'I + D']
-  let tagList = ['Pizzas','Hamburguesas','Foodies','Roma','Trending', 'IA foodtech']
+  let tagList = ['Pizzas', 'Hamburguesas', 'Foodies', 'Roma', 'Trending', 'IA foodtech']
 
   let title = faker.random.words(4)
 
