@@ -20,14 +20,15 @@ function authenticationVerify(allowedProfiles, authRequired = true) {
     }
 
     if (!req.token) {
-      res.status(403).json({ 'message': 'Debes estar autenticado para usar este método' })
+      res.status(401).json({ 'message': 'Debes estar autenticado para usar este método' })
       return
     }
 
     jwt.verify(req.token, config.APP_SECRET, (err, tokenData) => {
 
       if (err) {
-        res.status(403).json({ 'message': 'La sesión ha sido cerrado. Identifícate de nuevo.' })
+        res.status(401).json({ 'message': 'La sesión ha sido cerrado. Identifícate de nuevo.' })
+        return
       }
 
       let userProfile = tokenData.profile || defaultUserProfile

@@ -9,7 +9,7 @@ const expect = chai.expect
 chai.use(chaiHttp)
 
 const validCredentials = {
-  'email': 'juanma@test.es',
+  'email': 'test@test.es',
   'password': 'test'
 }
 
@@ -18,8 +18,9 @@ const invalidCredentials = {
   'password': 'testeando'
 }
 
-const existingEmail = {email: 'juanma@test.es'}
+const existingEmail = {email: 'test@test.es'}
 const nonExistingEmail = {email: 'test@test.com'}
+
 
 describe('auth', () => {
   describe('LOGIN', () => {
