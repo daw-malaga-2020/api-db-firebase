@@ -1,12 +1,15 @@
 const express= require('express')
 const router = express.Router()
+const authMiddleware = require('../middlewares/authentication')
+
+const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
 
 router.route('/products')
   .get((req,res) => {
     let itemList = req.app.get('products')
     res.json(itemList)
   })
-  .post((req,res) => {
+  .post(methodAllowedOnlyForAdmins,(req,res) => {
 
     let itemList = req.app.get('products')
 
@@ -33,7 +36,7 @@ router.route('/products')
 
       res.json(foundItem)
     })
-    .put((req,res) => {
+    .put(methodAllowedOnlyForAdmins,(req,res) => {
 
       let itemList= req.app.get('products')
       let searchId = parseInt(req.params.id)
@@ -55,7 +58,7 @@ router.route('/products')
 
       res.json(updateItem)
     })
-    .delete((req,res) => {
+    .delete(methodAllowedOnlyForAdmins,(req,res) => {
 
       let itemList = req.app.get('products')
       let searchId = parseInt(req.params.id)

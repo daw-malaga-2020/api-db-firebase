@@ -1,12 +1,15 @@
 const express = require('express')
 const router = express.Router()
+const authMiddleware = require('../middlewares/authentication')
+
+const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
 
 router.route('/articles')
   .get((req,res)=>{
     let itemList = req.app.get('articles')
     res.json(itemList)
   })
-  .post((req,res)=>{
+  .post(methodAllowedOnlyForAdmins, (req,res) => {
     let itemList = req.app.get('articles')
 
     let newItem= {...{id: itemList.length +1},...req.body}
@@ -31,14 +34,14 @@ router.route('/articles/:id')
 
     res.json(foundItem)
   })
-  .put((req,res)=>{
+  .put(methodAllowedOnlyForAdmins,(req,res)=>{
     let itemList= req.app.get('articles')
     let searchId = parseInt(req.params.id)
 
     let foundItemIndex = itemList.findIndex(item=> item.id===searchId)
 
     if(foundItemIndex=== -1){
-      res.status(201).json({'message': 'El elemento que intentas editar no existe'})
+      res.status(404).json({'message': 'El elemento que intentas editar no existe'})
       return
     }
 
@@ -51,7 +54,7 @@ router.route('/articles/:id')
 
     res.json(updateItem)
   })
-  .delete((req,res)=>{
+  .delete(methodAllowedOnlyForAdmins, (req,res)=>{
     let itemList = req.app.get('articles')
     let searchId = parseInt(req.params.id)
 

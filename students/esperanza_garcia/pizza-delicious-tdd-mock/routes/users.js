@@ -1,18 +1,26 @@
 const express = require('express')
 const router = express.Router()
 const md5= require('md5')
+const authMiddleware = require('../middlewares/authentication')
+
+const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
+const methodAllowedForUsersAndAdmins = authMiddleware(['user', 'admin'], true)
 
 router.route('/users')
-  .get((req,res)=>{
+  .get(methodAllowedOnlyForAdmins,(req,res)=>{
     let userList = req.app.get('users')
 
-    userList= userList.map((item)=> {
-      delete item.password
+    filteredList = userList.map((item) => {
+      let clonedUser = { ...item }
+
+      delete clonedUser.password
+
+      return clonedUser
     })
 
-    res.json(userList)
+    res.json(filteredList)
   })
-  .post((req,res) => {
+  .post(methodAllowedForUsersAndAdmins,(req,res) => {
     let userList = req.app.get('users')
 
     let newUser = {...{id: userList.length + 1}, ...req.body}
@@ -21,46 +29,68 @@ router.route('/users')
     userList.push(newUser)
     req.app.set('users', userList)
 
-    delete newUser.password
+    let clonedUser = {...newUser}
+
+    delete clonedUser.password
 
     res.status(201).json(newUser)
 
   })
 router.route('/users/:id')
-  .get((req,res)=>{
+  .get(methodAllowedForUsersAndAdmins,(req,res)=>{
     let userList = req.app.get('users')
     let searchId = parseInt(req.params.id)
 
     let foundItem= userList.find(item=> item.id === searchId)
-    if(!foundItem){
-      req.status(404).json({'message':'El elemnto '})
+    if(req.user.profile !== 'admin'){
+      foundItem = userList.find(item=> item.id === searchId && item.id === req.user.id)
     }
-    delete foundItem.password
 
-    res.json(foundItem)
+    if(!foundItem){
+      req.status(404).json({'message':'El usuario que intentas obtener no existe'})
+      return
+    }
+    let clonedUser = {...foundItem}
+    delete clonedUser.password
+
+    res.json(clonedUser)
   })
-  .put((req,res)=>{
+  .put(methodAllowedForUsersAndAdmins,(req,res)=>{
     let userList= req.app.get('users')
     let searchId= parseInt(req.params.id)
 
     let foundItemIndex= userList.findIndex(item=> item.id=== searchId)
+    if (req.user.profile !== 'admin') {
+      foundItemIndex = userList.find(item => item.id === searchId && item.id === req.user.id)
+    }
+
     if(foundItemIndex===-1){
       res.status(404).json({ 'message': 'El usuario que intentas editar no existe' })
       return
     }
     let updateUser= userList[foundItemIndex]
+
     updateUser= {...updateUser, ...req.body}
+
     userList[foundItemIndex]= updateUser
 
-    delete updateUser.password
+    req.app.set('users', userList)
 
-    res.json(updateUser)
+    let clonedUser= {...updateUser}
+
+    delete clonedUser.password
+
+    res.json(clonedUser)
   })
-  .delete((req,res)=>{
+  .delete(methodAllowedForUsersAndAdmins, (req,res)=>{
     let userList= req.app.get('users')
     let searchId= parseInt(req.params.id)
 
     let foundItemIndex= userList.findIndex(item=> item.id=== searchId)
+    if (req.user.profile !== 'admin') {
+      foundItemIndex = userList.find(item => item.id === searchId && item.id === req.user.id)
+    }
+
     if(foundItemIndex===-1){
       res.status(404).json({ 'message': 'El usuario que intentas eliminar no existe' })
       return

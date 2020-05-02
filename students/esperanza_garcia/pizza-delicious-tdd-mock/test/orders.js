@@ -13,6 +13,7 @@ chai.use(chaiHttp)
 
 let newItemRef = null
 let editedItemRef = null
+let editedItemStatusRef = null
 
 describe('orders', () => {
   describe('LIST', () => {
@@ -61,6 +62,7 @@ describe('orders', () => {
           expect(res.body).to.have.property('shipped_at').to.be.equal(null)
           expect(res.body).to.have.property('products').to.be.an('array')
           expect(res.body).to.have.property('user').to.be.an('object')
+          expect(res.body).to.have.deep.nested.property('user', newItemRef.user);
           expect(res.body).to.have.property('total').to.be.greaterThan(0)
           expect(res.body).to.have.property('status').to.be.equal(1)
 
@@ -95,6 +97,7 @@ describe('orders', () => {
           expect(res.body).to.have.property('shipped_at').to.be.equal(null)
           expect(res.body).to.have.property('products').to.be.an('array')
           expect(res.body).to.have.property('user').to.be.an('object')
+          expect(res.body).to.have.deep.nested.property('user', newItemRef.user);
           expect(res.body).to.have.property('total').to.be.greaterThan(0)
           expect(res.body).to.have.property('status').to.be.greaterThan(0)
 
@@ -125,13 +128,37 @@ describe('orders', () => {
           expect(res.body).to.have.property('shipped_at').to.be.not.equal(null)
           expect(res.body).to.have.property('products').to.be.an('array')
           expect(res.body).to.have.property('user').to.be.an('object')
+          expect(res.body).to.have.deep.nested.property('user', editedItemRef.user);
           expect(res.body).to.have.property('total').to.be.greaterThan(0)
           expect(res.body).to.have.property('status').to.be.greaterThan(1)
 
           done()
         })
     })
+
+    it('changing status Should return status 200 and json as default data format', (done) => {
+
+      editedItemStatusRef = modifyItemStatus(newItemRef)
+
+      chai.request(app)
+        .put('/orders/' + newItemRef.id + '/status')
+        .send(editedItemStatusRef)
+        .end((err, res) => {
+
+          if (err) {
+            console.error(err)
+            done()
+          }
+
+          expect(res).to.have.status(200)
+          expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+          expect(res.body).to.have.property('status').to.be.equal(editedItemStatusRef.status)
+
+          done()
+        })
+    })
   })
+
 })
 
 function createNewItem() {
@@ -160,6 +187,7 @@ function createNewItem() {
 
   return {
     'user': {
+      'id': 1,
       'firstname': faker.name.firstName(gender),
       'lastname': faker.name.lastName(gender),
       'address': faker.address.streetAddress(true),
@@ -174,9 +202,18 @@ function createNewItem() {
   }
 }
 
-function modifyItem(item) {
-  let statusList = [2,3] //1 pending, 2 shipped, 3 cancelled
+function modifyItemStatus(item) {
+  let statusList = [2, 3] //1 pending, 2 shipped, 3 cancelled
 
+  let statusItem = { status: faker.random.arrayElement(statusList) }
+
+  return statusItem
+}
+
+function modifyItem(item) {
+  let statusList = [2, 3] //1 pending, 2 shipped, 3 cancelled
+
+  item.user.address = faker.address.streetAddress(true)
   item.status = faker.random.arrayElement(statusList)
   item.shipped_at = faker.date.recent()
 

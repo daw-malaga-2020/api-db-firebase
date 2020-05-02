@@ -1,16 +1,28 @@
 const express = require('express')
 const router = express.Router()
 
+const authMiddleware = require('../middlewares/authentication')
+
+const methodAllowedOnlyForUsers = authMiddleware(['user'], true)
+const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
+const methodAllowedForUsersAndAdmins = authMiddleware(['user', 'admin'], true)
+
 router.route('/orders')
-  .get((req,res)=>{
+  .get(methodAllowedForUsersAndAdmins, (req,res)=>{
     let itemList = req.app.get('orders')
     res.json(itemList)
+
+    if(req.user.profile != 'admin'){
+      itemList = itemList.filter(item => item.user.id === req.user.id )
+    }
   })
-  .post((req,res)=>{
+  .post(methodAllowedOnlyForUsers, (req,res)=>{
 
     let itemList = req.app.get('orders')
 
     let newItem= {...{id: itemList.length + 1},...req.body}
+
+    newItem.user.id = req.user.id
 
     itemList.push(newItem)
     req.app.set('orders', itemList)
@@ -19,18 +31,23 @@ router.route('/orders')
   })
 
 router.route('/orders/:id')
-  .get((req,res)=>{
+  .get(methodAllowedForUsersAndAdmins, (req,res)=>{
     let itemList= req.app.get('orders')
     let searchId= parseInt(req.params.id)
 
     let foundItem= itemList.find(item=> item.id===searchId)
+
+    if(req.user.profile !== 'admin'){
+      foundItem = itemList.find(item => item.id === searchId && item.user.id === req.user.id)
+
+    }
     if(!foundItem){
       res.status(404).json({ 'message': 'El elemento que intentas obtener no existe' })
       return
     }
     res.json(foundItem)
   })
-  .put((req, res) => {
+  .put(methodAllowedOnlyForAdmins,(req, res) => {
 
     let itemList = req.app.get('orders')
     let searchId = parseInt(req.params.id)
