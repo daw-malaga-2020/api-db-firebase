@@ -22,11 +22,13 @@ const contactsRoutes = require('./routes/contacts')
 //crea variables globales para escribir/leer los datos desde cualquier sitio
 app.set("products", [])
 app.set("articles", [])
+app.set("orders", [])
+app.set("contacts", [])
 //inicia usuario de pruebas
 app.set("users", [{
   id: 1,
-  firstname: 'Uriah',
-  lastname: 'Yost',
+  firstname: 'Jairo',
+  lastname: 'Herrera',
   email: 'test@test.es',
   password: '098f6bcd4621d373cade4e832627b4f6',
   profile: 'admin',
