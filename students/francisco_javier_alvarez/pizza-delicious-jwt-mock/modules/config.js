@@ -1,11 +1,11 @@
-// config.js
+'use strict'
 
 if (process.env.NODE_ENV !== 'production') {
     const dotenv = require('dotenv')
     const result = dotenv.config()
 
     if (result.error) {
-        return result.error
+        throw result.error
     }
 
     const envs = result.parsed

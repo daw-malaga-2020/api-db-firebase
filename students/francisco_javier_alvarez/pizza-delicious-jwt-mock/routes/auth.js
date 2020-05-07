@@ -1,8 +1,9 @@
 const express = require('express')
 const router = express.Router()
 const jwt = require('jsonwebtoken')
-const config = require('../config')
+const config = require('../modules/config')
 const md5 = require('md5')
+const mailer = require('../modules/mailer')
 
 router.route('/auth/login')
   .post((req, res) => {
@@ -29,7 +30,7 @@ router.route('/auth/login')
       expiresIn: config.APP_TOKEN_VALIDITY_IN_DAYS + ' days'
     })
 
-    if(!generatedToken){
+    if (!generatedToken) {
       res.status(500).json({ 'message': 'No ha sido posible iniciar sesión con el usuario. Inténtalo más tarde' })
     }
 
@@ -50,6 +51,7 @@ router.route('/auth/forgotten-password')
     }
 
     //enviamos por email los datos para modificar su contraseña (a una nueva)
+    mailer.send(req.body.email, config.FORGOTTEN_PASSWORD_SUBJECT, config.FORGOTTEN_PASSWORD_BODY, false)
 
     res.json({ 'message': 'Te hemos enviado un email desde el que podrás modificar tu contraseña de forma segura' })
   })

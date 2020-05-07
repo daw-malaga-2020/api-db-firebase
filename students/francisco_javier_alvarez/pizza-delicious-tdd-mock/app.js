@@ -1,39 +1,42 @@
-'use stric'
+'use strict'
 
-// Dependencia usadas
+//dependencias usadas
 const express = require('express')
 const bearerToken = require('express-bearer-token')
 
-// Instancia express
+//instancia de express
 const app = express()
 
-// Middleware usados
+//configuramos middlewares usados
 app.use(bearerToken())
 app.use(express.json())
 
-// Rutas de ficheros externos
-const articlesRoutes = require('./routes/articles')
-const authRoutes = require('./routes/auth')
-const contactsRoutes = require('./routes/contacts')
-const ordersRoutes = require('./routes/orders')
+//traemos las rutas de ficheros externos
 const productsRoutes = require('./routes/products')
 const usersRoutes = require('./routes/users')
+const authRoutes = require('./routes/auth')
+const articlesRoutes = require('./routes/articles')
+const ordersRoutes = require('./routes/orders')
+const contactsRoutes = require('./routes/contacts')
 
-// Variables locales
-app.set("articles", [])
-app.set("contacts", [])
-app.set("orders", [])
+//crea variables globales para escribir/leer los datos desde cualquier sitio
 app.set("products", [])
+app.set("articles", [])
+//inicia usuario de pruebas
 app.set("users", [{
-    id: 1,
-    name: 'Francisco J.',
-    lastname: 'Álvarez',
-    email: 'test@test.es',
-    password: '098f6bcd4621d373cade4e832627b4f6',
-    profile: 'admin',
-    enabled: true
+  id: 1,
+  firstname: 'Uriah',
+  lastname: 'Yost',
+  email: 'test@test.es',
+  password: '098f6bcd4621d373cade4e832627b4f6',
+  profile: 'admin',
+  enabled: true
 }])
+//contraseña: test
+app.set("orders", [])
+app.set("contacts", [])
 
+//enganchamos las rutas
 app.use(productsRoutes)
 app.use(usersRoutes)
 app.use(authRoutes)
@@ -41,4 +44,5 @@ app.use(articlesRoutes)
 app.use(ordersRoutes)
 app.use(contactsRoutes)
 
+//exponemos la instancia configurada de la app
 module.exports = app
