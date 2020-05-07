@@ -1,5 +1,29 @@
 const express = require('express')
 const router = express.Router()
+
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+
+let productSchema = new Schema({
+    img: { type: String, required: false },
+    title: { type: String, required: false },
+    date: { type: String, required: false },
+    desc: { type: String, required: false },
+    price: { type: Number, required: false },
+    category: { type: String, required: false },
+    isEnabled: { type: Boolean, required: false }
+});
+let Product = mongoose.model('Product', productSchema)
+
+let item = new Product({
+    img: "",
+    title: "",
+    date: Date.now(),
+    desc: "",
+    price: 0,
+    category: "",
+    isEnabled: true
+})
 //middleware configurable para autenticación
 const authMiddleware = require('../middlewares/authentication')
 
