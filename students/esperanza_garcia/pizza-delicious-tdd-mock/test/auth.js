@@ -21,6 +21,9 @@ const invalidCredentials = {
 const existingEmail = {email: 'juanma@test.es'}
 const nonExistingEmail = {email: 'test@test.com'}
 
+console.info(tokens)
+
+
 describe('auth', () => {
   describe('LOGIN', () => {
 

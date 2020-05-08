@@ -20,7 +20,7 @@ router.route('/users')
 
     res.json(filteredList)
   })
-  .post((req,res) => {
+  .post(methodAllowedForUsersAndAdmins,(req,res) => {
     let userList = req.app.get('users')
 
     let newUser = {...{id: userList.length + 1}, ...req.body}
@@ -47,7 +47,7 @@ router.route('/users/:id')
     }
 
     if(!foundItem){
-      res.status(404).json({'message':'El usuario que intentas obtener no existe'})
+      req.status(404).json({'message':'El usuario que intentas obtener no existe'})
       return
     }
     let clonedUser = {...foundItem}
@@ -61,7 +61,7 @@ router.route('/users/:id')
 
     let foundItemIndex= userList.findIndex(item=> item.id=== searchId)
     if (req.user.profile !== 'admin') {
-      foundItemIndex = userList.findIndex(item => item.id === searchId && item.id === req.user.id)
+      foundItemIndex = userList.find(item => item.id === searchId && item.id === req.user.id)
     }
 
     if(foundItemIndex===-1){
@@ -69,7 +69,6 @@ router.route('/users/:id')
       return
     }
     let updateUser= userList[foundItemIndex]
-    delete req.body.id
 
     updateUser= {...updateUser, ...req.body}
 
@@ -92,7 +91,7 @@ router.route('/users/:id')
       foundItemIndex = userList.find(item => item.id === searchId && item.id === req.user.id)
     }
 
-    if(foundItemIndex === -1){
+    if(foundItemIndex===-1){
       res.status(404).json({ 'message': 'El usuario que intentas eliminar no existe' })
       return
     }
