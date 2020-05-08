@@ -1,5 +1,11 @@
 'use strict'
 
+//tokens por perfiles alex user, juanma admin
+const tokens = {
+  user: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiQWxleCIsInByb2ZpbGUiOiJ1c2VyIiwiaWF0IjoxNTg4MzMyOTg4LCJleHAiOjE2MTk4Njg5ODh9.QidBSFS0LL_85L1tGQnScZf5eQ7Wu52llUdIlTReRTc',
+  admin: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiSnVhbiBNYW51ZWwiLCJwcm9maWxlIjoiYWRtaW4iLCJpYXQiOjE1ODgzMzI5NTQsImV4cCI6MTYxOTg2ODk1NH0.IPcsecVdqCMDGeu4OF17Asr5LR25kBNIxED0IGeR3VM'
+}
+
 const faker = require('faker')
 const slugify = require('slugify')
 

@@ -21,14 +21,25 @@ const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
 
 router.route('/products')
     .get(async(req, res) => {
-        //REQUEST >> bearerToken >> express.json >> propio middleware de la ruta >> RESPONSE
-        productList = await Product.find().exec()
+        try {
+            productList = await Product.find().exec()
 
-        res.json(productList)
+            res.status(201).json(productList)
+        } catch (err) {
+            console.info(err)
+            res.status(500).json({ 'message': 'No hay ningún producto para mostrar.' })
+        }
+
     })
     .post( /* methodAllowedOnlyForAdmins ,*/ async(req, res) => {
-        let newProduct = await new Product(req.body).save()
-        res.status(201).send(newProduct)
+        try {
+            let newProduct = await new Product(req.body).save()
+            res.status(201).send(newProduct)
+        } catch (err) {
+            console.info(err)
+            res.status(500).json({ 'message': 'no se ha podido resolver la solicitud.' })
+        }
+
     })
 
 router.route('/products/:id')

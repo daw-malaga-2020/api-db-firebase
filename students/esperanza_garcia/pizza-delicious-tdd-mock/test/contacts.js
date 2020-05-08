@@ -16,14 +16,14 @@ let newItemRef = null
 describe('contacts', () => {
   describe('LIST', () => {
     describe('AS ANONYMOUS', () => {
-      it('Should return status 401 and json as default data format', (done) => {
+      it('Should return status 403 and json as default data format', (done) => {
 
         chai.request(app)
           .get('/contacts')
           .end((err, res) => {
 
             //1. comprobamos
-            expect(res).to.have.status(401)
+            expect(res).to.have.status(403)
             expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
             expect(res.body).to.have.property('message')
 
@@ -114,14 +114,13 @@ describe('contacts', () => {
     })
 
     describe('AS USER', () => {
-
       it('Should return status 201 and json as default data format', (done) => {
 
         newItemRef = createNewItem()
 
         chai.request(app)
           .post('/contacts')
-          .set('Authorization', tokens.user)
+          .set('Authorization',tokens.user)
           .send(newItemRef)
           .end((err, res) => {
 
@@ -157,7 +156,7 @@ describe('contacts', () => {
 
         chai.request(app)
           .post('/contacts')
-          .set('Authorization', tokens.admin)
+          .set('Authorization',tokens.admin)
           .send(newItemRef)
           .end((err, res) => {
 
@@ -188,140 +187,49 @@ describe('contacts', () => {
   })
 
   describe('GET', () => {
-    describe('AS ANONYMOUS', () => {
-      it('Should return status 401 and json as default data format', (done) => {
+    it('Should return status 200 and json as default data format', (done) => {
 
-        chai.request(app)
-          .get('/contacts/' + newItemRef.id)
-          .end((err, res) => {
+      chai.request(app)
+        .get('/contacts/' + newItemRef.id)
+        .end((err, res) => {
 
-            if (err) {
-              console.error(err)
-              done()
-            }
-
-            expect(res).to.have.status(401)
-            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
-            expect(res.body).to.have.property('message')
-
+          if (err) {
+            console.error(err)
             done()
-          })
-      })
+          }
+
+          expect(res).to.have.status(200)
+          expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
+          expect(res.body).to.have.property('id').to.be.equal(newItemRef.id)
+          expect(res.body).to.have.property('full_name').to.be.equal(newItemRef.full_name)
+          expect(res.body).to.have.property('email').to.be.equal(newItemRef.email)
+          expect(res.body).to.have.property('subject').to.be.equal(newItemRef.subject)
+          expect(res.body).to.have.property('message').to.be.equal(newItemRef.message)
+          expect(res.body).to.have.property('dated_at')
+
+          done()
+        })
     })
-
-    describe('AS USER', () => {
-      it('Should return status 403 and json as default data format', (done) => {
-
-        chai.request(app)
-          .get('/contacts/' + newItemRef.id)
-          .set('Authorization', tokens.user)
-          .end((err, res) => {
-
-            if (err) {
-              console.error(err)
-              done()
-            }
-
-            expect(res).to.have.status(403)
-            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
-            expect(res.body).to.have.property('message')
-
-            done()
-          })
-      })
-    })
-
-    describe('AS ADMIN', () => {
-      it('Should return status 200 and json as default data format', (done) => {
-
-        chai.request(app)
-          .get('/contacts/' + newItemRef.id)
-          .set('Authorization', tokens.admin)
-          .end((err, res) => {
-
-            if (err) {
-              console.error(err)
-              done()
-            }
-
-            expect(res).to.have.status(200)
-            expect(res).to.have.header('Content-type', 'application/json; charset=utf-8')
-            expect(res.body).to.have.property('id').to.be.equal(newItemRef.id)
-            expect(res.body).to.have.property('full_name').to.be.equal(newItemRef.full_name)
-            expect(res.body).to.have.property('email').to.be.equal(newItemRef.email)
-            expect(res.body).to.have.property('subject').to.be.equal(newItemRef.subject)
-            expect(res.body).to.have.property('message').to.be.equal(newItemRef.message)
-            expect(res.body).to.have.property('dated_at')
-
-            done()
-          })
-      })
-    })
-
   })
 
 
   describe('DELETE', () => {
-    describe('AS ANONYMOUS', () => {
-      it('Should return status 401 and json as default data format', function (done) {
+    it('Should return status 200 and json as default data format', function (done) {
 
-        chai.request(app)
-          .delete('/contacts/' + newItemRef.id)
-          .end((err, res) => {
+      chai.request(app)
+        .delete('/contacts/' + newItemRef.id)
+        .end((err, res) => {
 
-            if (err) {
-              console.error(err)
-              done()
-            }
-
-            expect(res).to.have.status(401)
-            expect(res.body).to.have.property('message')
-
+          if (err) {
+            console.error(err)
             done()
-          })
-      })
-    })
+          }
 
-    describe('AS USER', () => {
-      it('Should return status 403 and json as default data format', function (done) {
+          expect(res).to.have.status(204)
+          expect(res.body).to.be.empty
 
-        chai.request(app)
-          .delete('/contacts/' + newItemRef.id)
-          .set('Authorization', tokens.user)
-          .end((err, res) => {
-
-            if (err) {
-              console.error(err)
-              done()
-            }
-
-            expect(res).to.have.status(403)
-            expect(res.body).to.have.property('message')
-
-            done()
-          })
-      })
-    })
-
-    describe('AS ADMIN', () => {
-      it('Should return status 204 and json as default data format', function (done) {
-
-        chai.request(app)
-          .delete('/contacts/' + newItemRef.id)
-          .set('Authorization', tokens.admin)
-          .end((err, res) => {
-
-            if (err) {
-              console.error(err)
-              done()
-            }
-
-            expect(res).to.have.status(204)
-            expect(res.body).to.be.empty
-
-            done()
-          })
-      })
+          done()
+        })
     })
   })
 })
