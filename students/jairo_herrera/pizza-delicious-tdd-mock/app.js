@@ -7,7 +7,7 @@ const bearerToken = require('express-bearer-token')
 //instancia de express
 const app = express()
 
-//configuramos middlewares usados
+//configuramos middlewares usado
 app.use(bearerToken())
 app.use(express.json())
 
