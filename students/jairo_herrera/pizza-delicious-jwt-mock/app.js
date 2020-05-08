@@ -1,6 +1,6 @@
 'use strict'
 
-//dependencias usadas
+//dependencias usada
 const express = require('express')
 const bearerToken = require('express-bearer-token')
 const cors = require('cors')
