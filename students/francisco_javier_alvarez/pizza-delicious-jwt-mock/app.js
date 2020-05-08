@@ -5,8 +5,9 @@ const express = require('express')
 const bearerToken = require('express-bearer-token')
 const cors = require('cors')
 const mongoose = require('mongoose')
+const config = require('./modules/config')
 
-mongoose.connect('mongodb+srv://fran:R82sw5-_VUCp_ZH@ddawmalaga2020-f0sj9.mongodb.net/test?retryWrites=true&w=majority', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect(config.DB_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true });
 
 const db = mongoose.connection;
 
