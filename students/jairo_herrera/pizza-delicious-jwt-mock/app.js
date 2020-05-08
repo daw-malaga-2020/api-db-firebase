@@ -1,22 +1,9 @@
 'use strict'
 
-//dependencias usada
+//dependencias usadas
 const express = require('express')
 const bearerToken = require('express-bearer-token')
 const cors = require('cors')
-const mongoose = require ('mongoose')
-
-(async () => {
-  try {
- await mongoose.connect('mongodb+srv://Jairo:l2QyhC0f4bPima3o@ddawmalaga2020-kfewq.mongodb.net/test?retryWrites=true&w=majority', {
-  dbName: 'ddawmalaga2020',
-  useNewUrlParser: true,
-});
-  } catch (error) {
-    console.error(error);
-  }
-})();
-
 
 //instancia de express
 const app = express()
