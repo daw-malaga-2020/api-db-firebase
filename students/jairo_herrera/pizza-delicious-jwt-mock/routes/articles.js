@@ -72,7 +72,7 @@ router.route('/articles/:id')
     }
 
     itemList.splice(foundItemIndex, 1)
-    req.app.set('articles', itemList)
+    req.app.get('articles', itemList)
 
     res.status(204).json()
   })
