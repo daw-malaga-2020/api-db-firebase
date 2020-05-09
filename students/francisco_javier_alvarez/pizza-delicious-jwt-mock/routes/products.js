@@ -2,13 +2,14 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
+const SchemaTypes = mongoose.Schema.Types;
 
 let productSchema = new Schema({
     title: { type: String, required: false },
     category: { type: String, required: false },
     image: { type: String, required: false },
     description: { type: String, required: false },
-    price: { type: Number, required: false, min: 0.1 },
+    price: { type: Number /* SchemaTypes.Double */ , required: false, min: 0.1 },
     enabled: { type: Boolean, default: false }
 });
 let Product = mongoose.model('products', productSchema)
