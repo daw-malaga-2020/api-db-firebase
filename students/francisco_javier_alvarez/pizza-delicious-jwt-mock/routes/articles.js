@@ -1,5 +1,22 @@
 const express = require('express')
 const router = express.Router()
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+
+let articleSchema = new Schema({
+    image: { type: String, required: false },
+    title: { type: String, required: false },
+    publicationdate: { type: String, required: true, default: Date().toString() },
+    body: { type: String, required: true },
+    resume: { type: String, required: true },
+    labels: { type: String, required: true },
+    autor: { type: String, required: true },
+    category: [{ title: String }],
+    enabled: { type: Boolean, default: false }
+})
+
+let Article = mongoose.model('articles', articleSchema)
+
 //middleware configurable para autenticación
 const authMiddleware = require('../middlewares/authentication')
 
@@ -7,74 +24,65 @@ const authMiddleware = require('../middlewares/authentication')
 const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
 
 router.route('/articles')
-  .get((req, res) => {
-    let itemList = req.app.get('articles')
-    res.json(itemList)
-  })
-  .post(methodAllowedOnlyForAdmins, (req, res) => {
-    //REQUEST >> bearerToken >> express.json >> methodAllowedOnlyForAdmins >> propio middleware de la ruta >> RESPONSE
-    let itemList = req.app.get('articles')
+    .get(async(req, res) => {
+        try {
+            articlesList = await Article.find().exec()
 
-    let newItem = { ...{ id: itemList.length + 1 }, ...req.body }
-
-    itemList.push(newItem)
-    req.app.set('articles', itemList)
-
-    res.status(201).json(newItem)
-  })
+            res.status(201).json(articlesList)
+        } catch (err) {
+            console.info(err)
+            res.status(500).json({ 'message': 'No hay ningún producto para mostrar.' })
+        }
+    })
+    .post( /* methodAllowedOnlyForAdmins, */ async(req, res) => {
+        try {
+            let newArticle = await new Article(req.body).save()
+            res.status(201).send(newArticle)
+        } catch (err) {
+            console.info(err)
+            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
+        }
+    })
 
 router.route('/articles/:id')
-  .get((req, res) => {
+    .get(async(req, res) => {
+        try {
+            let searchId = req.params.id
+            let foundArticle = await Article.findById(searchId)
 
-    let itemList = req.app.get('articles')
-    let searchId = parseInt(req.params.id)
+            if (!foundArticle) {
+                res.status(404).json({ 'message': 'El elemento que buscas no existe.' })
+                return
+            }
 
-    let foundItem = itemList.find(item => item.id === searchId)
+            res.json(foundArticle)
+        } catch (err) {
+            console.info(err)
+            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
+        }
+    })
+    .put( /* methodAllowedOnlyForAdmins, */ async(req, res) => {
+        try {
+            let searchId = req.params.id
+            let foundArticle = await Article.findOneAndUpdate(searchId, req.body, { new: true })
+            res.json(foundArticle)
+        } catch (err) {
+            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
+        }
+    })
+    .delete( /* methodAllowedOnlyForAdmins, */ async(req, res) => {
+        try {
+            let searchId = req.params.id
+            let foundArticle = await Article.findOneAndDelete({ _id: searchId })
 
-    if (!foundItem) {
-      res.status(404).json({ 'message': 'El elemento que intentas obtener no existe' })
-      return
-    }
-
-    res.json(foundItem)
-  })
-  .put(methodAllowedOnlyForAdmins,(req, res) => {
-
-    let itemList = req.app.get('articles')
-    let searchId = parseInt(req.params.id)
-
-    let foundItemIndex = itemList.findIndex(item => item.id === searchId)
-
-    if (foundItemIndex === -1) {
-      res.status(404).json({ 'message': 'El elemento que intentas editar no existe' })
-      return
-    }
-
-    let updatedItem = itemList[foundItemIndex]
-
-    updatedItem = { ...updatedItem, ...req.body }
-
-    itemList[foundItemIndex] = updatedItem
-    req.app.set('articles', itemList)
-
-    res.json(updatedItem)
-  })
-  .delete(methodAllowedOnlyForAdmins,(req, res) => {
-
-    let itemList = req.app.get('articles')
-    let searchId = parseInt(req.params.id)
-
-    let foundItemIndex = itemList.findIndex(item => item.id === searchId)
-
-    if (foundItemIndex === -1) {
-      res.status(404).json({ 'message': 'El elemento que intentas eliminar no existe' })
-      return
-    }
-
-    itemList.splice(foundItemIndex, 1)
-    req.app.set('articles', itemList)
-
-    res.status(204).json()
-  })
+            if (foundArticle.deletedCount === 0) {
+                res.status(404).json({ 'message': 'El producto que quieres borrar no está.' })
+                return
+            }
+            res.status(204).json()
+        } catch (err) {
+            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
+        }
+    })
 
 module.exports = router
