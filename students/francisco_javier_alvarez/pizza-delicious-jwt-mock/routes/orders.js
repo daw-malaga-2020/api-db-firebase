@@ -1,89 +1,103 @@
 const express = require('express')
 const router = express.Router()
-const mongoose = require('mongoose')
-const Schema = mongoose.Schema
-const ordersSchema = new Schema({
-    products: [{ type: String, required: true }],
-    total: { type: Number, required: true },
-    user: { type: Object, required: true },
-    state: { type: Number, required: true },
-    date: { type: String, required: true },
-    shippingdate: { type: String, required: true, default: Date().toString() }
-})
-
-const Order = new mongoose.model('orders', ordersSchema)
-
 //middleware configurable para autenticación
 const authMiddleware = require('../middlewares/authentication')
 
 //middleware configurable para usar el método sólo administradores
 const methodAllowedOnlyForUsers = authMiddleware(['user'], true)
-    //middleware configurable para usar el método sólo administradores
+//middleware configurable para usar el método sólo administradores
 const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
-    //middleware configurable para usar el método usuarios y administradores
+//middleware configurable para usar el método usuarios y administradores
 const methodAllowedForUsersAndAdmins = authMiddleware(['user', 'admin'], true)
 
 router.route('/orders')
-    .get( /* methodAllowedForUsersAndAdmins, */ async(req, res) => {
-        try {
-            let ordersList = await User.find().exec()
-            res.status(201).json(ordersList)
-        } catch (err) {
-            console.info(err)
-            res.status(500).json({ 'message': 'No se ha podido resolver la petición.' })
-        }
-    })
-    .post( /* methodAllowedOnlyForUsers, */ async(req, res) => {
-        try {
-            let newOrders = await new Order(req.body).save()
-            res.status(201).send(newOrders)
-        } catch (err) {
-            console.info(err)
-            res.status(500).json({ 'message': 'no se ha podido resolver la solicitud.' })
-        }
-    })
+  .get(methodAllowedForUsersAndAdmins, (req, res) => {
+    let itemList = req.app.get('orders')
+
+    //si no es un admin
+    if (req.user.profile !== 'admin') {
+      itemList = itemList.filter(item => item.user.id === req.user.id)
+    }
+
+    res.json(itemList)
+  })
+  .post(methodAllowedOnlyForUsers, (req, res) => {
+
+    let itemList = req.app.get('orders')
+
+    let newItem = { ...{ id: itemList.length + 1 }, ...req.body }
+    //asocia al pedido el id del usuario identificado para evitar que quien lo crea pueda hacerlo a nombre de otro usuario
+    newItem.user.id = req.user.id
+
+    itemList.push(newItem)
+    req.app.set('orders', itemList)
+
+    res.status(201).json(newItem)
+  })
 
 router.route('/orders/:id')
-    .get( /* methodAllowedForUsersAndAdmins, */ async(req, res) => {
-        try {
-            let searchId = req.params.id
-            let foundOrder = await Order.findById(searchId)
+  .get(methodAllowedForUsersAndAdmins, (req, res) => {
 
-            if (!foundOrder) {
-                res.status(404).json({ 'message': 'El elemento que buscas no existe.' })
-                return
-            }
+    let itemList = req.app.get('orders')
+    let searchId = parseInt(req.params.id)
 
-            res.json(foundOrder)
-        } catch (err) {
-            console.info(err)
-            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
-        }
-    })
-    .put( /* methodAllowedOnlyForAdmins,  */ async(req, res) => {
-        try {
-            let searchId = req.params.id
-            let foundOrder = await Order.findOneAndUpdate(searchId, req.body, { new: true })
-            res.json(foundOrder)
-        } catch (err) {
-            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
-        }
-    })
+    let foundItem = itemList.find(item => item.id === searchId)
+
+    if (req.user.profile !== 'admin') {
+      //busca dentro de los pedidos asociados a su usuario (por su identificador)
+      foundItem = itemList.find(item => item.id === searchId && item.user.id === req.user.id)
+    }
+
+    if (!foundItem) {
+      res.status(404).json({ 'message': 'El elemento que intentas obtener no existe' })
+      return
+    }
+
+    res.json(foundItem)
+  })
+  .put(methodAllowedOnlyForAdmins, (req, res) => {
+
+    let itemList = req.app.get('orders')
+    let searchId = parseInt(req.params.id)
+
+    let foundItemIndex = itemList.findIndex(item => item.id === searchId)
+
+    if (foundItemIndex === -1) {
+      res.status(404).json({ 'message': 'El elemento que intentas editar no existe' })
+      return
+    }
+
+    let updatedItem = itemList[foundItemIndex]
+
+    updatedItem = { ...updatedItem, ...req.body }
+
+    itemList[foundItemIndex] = updatedItem
+    req.app.set('orders', itemList)
+
+    res.json(updatedItem)
+  })
 
 router.route('/orders/:id/status')
-    .put( /* methodAllowedOnlyForAdmins, */ async(req, res) => {
-        try {
-            let searchId = req.params.id
-            let foundOrder = await Order.findOneAndDelete({ _id: searchId })
+  .put(methodAllowedOnlyForAdmins, (req, res) => {
 
-            if (foundOrder.deletedCount === 0) {
-                res.status(404).json({ 'message': 'El producto que quieres borrar no está.' })
-                return
-            }
-            res.status(204).json()
-        } catch (err) {
-            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
-        }
-    })
+    let itemList = req.app.get('orders')
+    let searchId = parseInt(req.params.id)
+
+    let foundItemIndex = itemList.findIndex(item => item.id === searchId)
+
+    if (foundItemIndex === -1) {
+      res.status(404).json({ 'message': 'El elemento que intentas editar no existe' })
+      return
+    }
+
+    let updatedItem = itemList[foundItemIndex]
+
+    updatedItem.status = req.body.status
+
+    itemList[foundItemIndex] = updatedItem
+    req.app.set('orders', itemList)
+
+    res.json({ status: updatedItem.status })
+  })
 
 module.exports = router
