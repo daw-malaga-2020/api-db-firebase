@@ -1,16 +1,16 @@
 'use strict'
 
 if (process.env.NODE_ENV !== 'production') {
-    const dotenv = require('dotenv')
-    const result = dotenv.config()
+  const dotenv = require('dotenv')
+  const result = dotenv.config()
 
-    if (result.error) {
-        throw result.error
-    }
+  if (result.error) {
+    throw result.error
+  }
 
-    const envs = result.parsed
+  const envs = result.parsed
 
-    module.exports = envs
+  module.exports = envs
 } else {
-    module.exports = process.env
+  module.exports = process.env
 }

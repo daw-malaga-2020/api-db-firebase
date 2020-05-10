@@ -9,8 +9,6 @@ const config = require('./modules/config')
 
 mongoose.connect(config.DB_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true });
 
-const db = mongoose.connection;
-
 
 //instancia de express
 const app = express()
