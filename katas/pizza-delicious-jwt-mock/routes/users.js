@@ -1,3 +1,5 @@
+'use strict'
+
 const express = require('express')
 const router = express.Router()
 const md5 = require('md5')
@@ -13,7 +15,7 @@ router.route('/users')
   .get(methodAllowedOnlyForAdmins, (req, res) => {
     let userList = req.app.get('users')
 
-    filteredList = userList.map((item) => {
+    let filteredList = userList.map((item) => {
       let clonedItem = { ...item }
 
       delete clonedItem.password

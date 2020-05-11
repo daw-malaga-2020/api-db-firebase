@@ -15,6 +15,9 @@ router.route('/articles')
     //REQUEST >> bearerToken >> express.json >> methodAllowedOnlyForAdmins >> propio middleware de la ruta >> RESPONSE
     let itemList = req.app.get('articles')
 
+    //valido los datos del nuevo artículos
+    //todo correcto: añado el nuevo artículo y lo guardo en la variable global (articles)
+    //
     let newItem = { ...{ id: itemList.length + 1 }, ...req.body }
 
     itemList.push(newItem)
