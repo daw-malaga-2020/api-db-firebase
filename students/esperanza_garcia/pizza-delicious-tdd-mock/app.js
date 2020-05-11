@@ -1,4 +1,5 @@
 const express = require('express')
+const jwt = require('jsonwebtoken')
 const bearerToken = require('express-bearer-token')
 const cors = require('cors')
 

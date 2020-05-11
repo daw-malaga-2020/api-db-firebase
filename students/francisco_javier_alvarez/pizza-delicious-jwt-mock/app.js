@@ -4,6 +4,11 @@
 const express = require('express')
 const bearerToken = require('express-bearer-token')
 const cors = require('cors')
+const mongoose = require('mongoose')
+const config = require('./modules/config')
+
+mongoose.connect(config.DB_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true });
+
 
 //instancia de express
 const app = express()
@@ -22,14 +27,9 @@ const ordersRoutes = require('./routes/orders')
 const contactsRoutes = require('./routes/contacts')
 
 //crea variables globales para escribir/leer los datos desde cualquier sitio
-app.set("products", [{
-    id: 1,
-    product: 'Coca Cola',
-    price: 2
-}])
+app.set("products", [])
 app.set("articles", [])
-
-//inicia usuario de pruebas
+    //inicia usuario de pruebas
 app.set("users", [{
             id: 1,
             firstname: 'Juan Manuel',

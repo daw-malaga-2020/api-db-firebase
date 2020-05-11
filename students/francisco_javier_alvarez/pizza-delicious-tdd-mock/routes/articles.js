@@ -1,50 +1,54 @@
 const express = require('express')
 const router = express.Router()
 
-router('/articles')
+router.route('/articles')
     .get((req, res) => {
         let itemList = req.app.get('articles')
-        res.json(itemlist)
+        res.json(itemList)
     })
     .post((req, res) => {
+
         let itemList = req.app.get('articles')
 
         let newItem = {... { id: itemList.length + 1 }, ...req.body }
 
         itemList.push(newItem)
-        req.app.set('articles', itemlist)
+        req.app.set('articles', itemList)
+
 
         res.status(201).json(newItem)
     })
 
-router('/articles/:id')
+router.route('/articles/:id')
     .get((req, res) => {
-        let itemList = req.app.get('articles')
-        let itemID = parseInt(req.params.id)
 
-        let foundItem = itemList.find((item) => item.id === itemID)
+        let itemList = req.app.get('articles')
+        let searchId = parseInt(req.params.id)
+
+        let foundItem = itemList.find(item => item.id === searchId)
 
         if (!foundItem) {
-            res.status(404).json({ 'message': 'El artículo que estás buscando, le toca salir a pasear.' })
+            res.status(404).json({ 'message': 'El elemento que intentas obtener no existe' })
             return
         }
 
         res.json(foundItem)
     })
     .put((req, res) => {
+
         let itemList = req.app.get('articles')
-        let itemID = parseInt(req.params.id)
+        let searchId = parseInt(req.params.id)
 
-        let foundItemIndex = itemList.findIndex(item => item.id === itemID)
+        let foundItemIndex = itemList.findIndex(item => item.id === searchId)
 
-        if (!foundItem) {
-            res.status(404).json({ 'message': 'El artículo que deseas editar no ha llegado aún.' })
+        if (foundItemIndex === -1) {
+            res.status(404).json({ 'message': 'El elemento que intentas editar no existe' })
             return
         }
 
         let updatedItem = itemList[foundItemIndex]
 
-        updatedIItem = {... { updatedItem }, ...req.body }
+        updatedItem = {...updatedItem, ...req.body }
 
         itemList[foundItemIndex] = updatedItem
         req.app.set('articles', itemList)
@@ -52,17 +56,19 @@ router('/articles/:id')
         res.json(updatedItem)
     })
     .delete((req, res) => {
+
         let itemList = req.app.get('articles')
-        let itemID = parseInt(req.params.id)
+        let searchId = parseInt(req.params.id)
 
-        let foundItemIndex = itemList.find(item => item.id === itemID)
+        let foundItemIndex = itemList.findIndex(item => item.id === searchId)
 
-        if (!foundItemIndex) {
-            res.status(404).json({ 'message': 'El artículo que desea borrar se fue para no volver' })
+        if (foundItemIndex === -1) {
+            res.status(404).json({ 'message': 'El elemento que intentas eliminar no existe' })
+            return
         }
 
         itemList.splice(foundItemIndex, 1)
-        req.get('articles', itemList)
+        req.app.get('articles', itemList)
 
         res.status(204).json()
     })
