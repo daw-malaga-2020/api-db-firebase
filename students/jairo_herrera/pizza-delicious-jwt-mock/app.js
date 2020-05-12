@@ -4,6 +4,12 @@
 const express = require('express')
 const bearerToken = require('express-bearer-token')
 const cors = require('cors')
+const mongoose = require('mongoose')
+const config = require('./modules/config')
+
+mongoose.connect(config.DB_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true });
+
+const db = mongoose.connection;
 
 //instancia de express
 const app = express()
