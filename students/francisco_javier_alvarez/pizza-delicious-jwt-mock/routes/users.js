@@ -2,53 +2,50 @@ const express = require('express')
 const router = express.Router()
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
-
-let userSchema = new Schema({
-    email: { type: String, required: false },
-    password: { type: String, required: false },
-    firstname: { type: String, required: false },
-    lastname: { type: String, required: false },
-    phone: { type: String, required: false },
-    address: { type: String, required: false },
-    profile: { type: String, required: false },
-    enabled: { type: Boolean, default: false }
-});
+const userSchema = new Schema({
+    email: { type: String, required: true },
+    password: { type: String, required: true },
+    phone: { type: String, required: true },
+    address: { type: String, required: true },
+    profile: { type: String, required: true },
+    enabled: { type: Boolean, required: true }
+})
 let User = mongoose.model('users', userSchema)
-const md5 = require('md5')
 
-/*     //middleware configurable para autenticación
+const md5 = require('md5')
+    //middleware configurable para autenticación
 const authMiddleware = require('../middlewares/authentication')
 
 //middleware configurable para usar el método sólo administradores
 const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
     //middleware configurable para usar el método usuarios y administradores
-const methodAllowedForUsersAndAdmins = authMiddleware(['user', 'admin'], true) */
+const methodAllowedForUsersAndAdmins = authMiddleware(['user', 'admin'], true)
 
 router.route('/users')
-    .get( /* methodAllowedOnlyForAdmins ,*/ async(req, res) => {
+    .get( /* methodAllowedOnlyForAdmins, */ async(req, res) => {
         try {
-            let usersList = await User.find().exec()
-            usersList.map((user) => user.password = "")
+            usersList = await User.find().exec()
+
             res.status(201).json(usersList)
         } catch (err) {
             console.info(err)
-            res.status(500).json({ 'message': 'No se ha podido resolver la petición.' })
+            res.status(500).json({ 'message': 'No se ha podido realizar la petición.' })
         }
     })
     .post(async(req, res) => {
         try {
             let user = req.body
             user.password = md5(user.password)
-
             let newUser = await new User(user).save()
-            res.status(201).json(newUser)
+            res.status(201).send(newUser)
         } catch (err) {
-            res.status(500).json({ 'message': 'No se ha podido resolver la petición.' })
+            console.info(err)
+            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
         }
     })
 
 router.route('/users/:id')
-    .get( /* methodAllowedForUsersAndAdmins ,*/ async(req, res) => {
+    .get( /* methodAllowedForUsersAndAdmins, */ async(req, res) => {
         try {
             let searchId = req.params.id
             let foundUser = await User.findById(searchId)
@@ -57,7 +54,8 @@ router.route('/users/:id')
                 res.status(404).json({ 'message': 'El usuario que buscas no existe.' })
                 return
             }
-            foundUser.password = "*"
+
+            foundUser.password = "contraseña encriptada"
 
             res.json(foundUser)
         } catch (err) {
@@ -73,7 +71,6 @@ router.route('/users/:id')
         } catch (err) {
             res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
         }
-
     })
     .delete( /* methodAllowedForUsersAndAdmins, */ async(req, res) => {
         try {

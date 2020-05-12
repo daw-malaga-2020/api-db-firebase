@@ -9,8 +9,6 @@ const config = require('./modules/config')
 
 mongoose.connect(config.DB_CONNECTION_STRING, { useNewUrlParser: true, useUnifiedTopology: true });
 
-const db = mongoose.connection;
-
 
 //instancia de express
 const app = express()
@@ -29,7 +27,29 @@ const ordersRoutes = require('./routes/orders')
 const contactsRoutes = require('./routes/contacts')
 
 //crea variables globales para escribir/leer los datos desde cualquier sitio
+app.set("products", [])
 app.set("articles", [])
+    //inicia usuario de pruebas
+app.set("users", [{
+            id: 1,
+            firstname: 'Juan Manuel',
+            lastname: 'Castillo',
+            email: 'juanma@test.es',
+            password: '098f6bcd4621d373cade4e832627b4f6',
+            profile: 'admin',
+            enabled: true
+        },
+        {
+            id: 2,
+            firstname: 'Alex',
+            lastname: 'Martín',
+            email: 'alex@test.es',
+            password: '098f6bcd4621d373cade4e832627b4f6',
+            profile: 'user',
+            enabled: true
+        }
+    ])
+    //contraseña: test
 app.set("orders", [])
 app.set("contacts", [])
 

@@ -29,7 +29,6 @@ router.route('/products')
             console.info(err)
             res.status(500).json({ 'message': 'No hay ningún producto para mostrar.' })
         }
-
     })
     .post( /* methodAllowedOnlyForAdmins ,*/ async(req, res) => {
         try {
@@ -37,9 +36,8 @@ router.route('/products')
             res.status(201).send(newProduct)
         } catch (err) {
             console.info(err)
-            res.status(500).json({ 'message': 'no se ha podido resolver la solicitud.' })
+            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
         }
-
     })
 
 router.route('/products/:id')
@@ -58,7 +56,6 @@ router.route('/products/:id')
             console.info(err)
             res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
         }
-
     })
     .put( /* methodAllowedOnlyForAdmins, */ async(req, res) => {
         try {

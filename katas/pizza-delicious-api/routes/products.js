@@ -7,7 +7,7 @@ const authMiddleware = require('../middlewares/authentication')
 //middleware configurable para usar el método sólo administradores
 const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
 
-  const methodAllowedAuthOptional = authMiddleware(['user','admin'], false)
+const methodAllowedAuthOptional = authMiddleware(['user','admin'], false)
 
 router.route('/products')
   .get(methodAllowedAuthOptional, async (req, res) => {

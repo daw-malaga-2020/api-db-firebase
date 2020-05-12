@@ -150,6 +150,728 @@
 				}
 			],
 			"protocolProfileBehavior": {}
+		},
+		{
+			"name": "pizza-delicious-mock",
+			"item": [
+				{
+					"name": "products",
+					"item": [
+						{
+							"name": "listado de productos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/products",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "obtiene un producto",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/products/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"products",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Crea producto",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"title\": \"Coca cola\",\n\t\"category\": \"Bebidas\",\n\t\"image\": \"https://www.hungryhowies.com/sites/default/files/styles/menu_item_280x175/public/images/menu-items/thumbnails/buildyourownpizza_0.png?itok=fgzFck86\",\n\t\"description\": \"Descripción de la Cola\",\n\t\"price\": 1.75,\n\t\"enabled\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/products",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"products"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edita producto",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"title\": \"Sprite\",\n\t\"category\": \"Bebidas\",\n\t\"image\": \"https://www.hungryhowies.com/sites/default/files/styles/menu_item_280x175/public/images/menu-items/thumbnails/buildyourownpizza_0.png?itok=fgzFck86\",\n\t\"description\": \"Descripción del sprite\",\n\t\"price\": 1.15,\n\t\"enabled\": false\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/products/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"products",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Elimina producto",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/products/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"products",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "orders",
+					"item": [
+						{
+							"name": "listado de pedidos",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiSnVhbiBNYW51ZWwiLCJwcm9maWxlIjoiYWRtaW4iLCJpYXQiOjE1ODg5MzI5NTIsImV4cCI6MTYyMDQ2ODk1Mn0.I3gvUMS0BN-K29A3e5Gap9mhLI-5xdjhtHX-K56j5jQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/orders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "obtiene un pedido",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/orders/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"orders",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Crea pedido",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MiwiZmlyc3RuYW1lIjoiQWxleCIsInByb2ZpbGUiOiJ1c2VyIiwiaWF0IjoxNTg4OTMzMzU2LCJleHAiOjE2MjA0NjkzNTZ9.cBUIWzCo7nEQrxEjZ5HqUz1NgtbAZ77E5NdY6YjjTr4",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"user\": {\n        \"id\": 2,\n        \"firstname\": \"Alex\",\n        \"lastname\": \"Martin\",\n        \"address\": \"C/ Convivencia 1, bajo 3 41011, Sevilla (Sevilla) España\",\n        \"phone\": \"+34 666 666 666\"\n    },\n    \"products\": [\n        {\n            \"title\": \"Pizza Hawaiana XL\",\n            \"image\": \"https://cdn2.cocinadelirante.com/sites/default/files/styles/gallerie/public/images/2019/11/como-hacer-pizza-hawaiana.jpg\",\n            \"description\": \"Pizza Hawwaiana con un montón de piña para el niño y la niña\",\n            \"price\": 22,\n            \"category\": \"Pizzas\",\n            \"quantity\": 2\n        }\n    ],\n    \"total\": 44,\n    \"status\": 2,\n    \"shipped_at\": \"2020-04-02 21:00:54\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/orders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"orders"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edita un pedido",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n    \"products\": [\n        {\n            \"title\": \"Pizza Hawaiana XL\",\n            \"image\": \"https://cdn2.cocinadelirante.com/sites/default/files/styles/gallerie/public/images/2019/11/como-hacer-pizza-hawaiana.jpg\",\n            \"description\": \"Pizza Hawwaiana con un montón de piña para el niño y la niña\",\n            \"price\": 22,\n            \"category\": \"Pizzas\",\n            \"quantity\": 2\n        },\n        {\n            \"title\": \"Pizza BBQ\",\n            \"image\": \"https://cdn2.cocinadelirante.com/sites/default/files/styles/gallerie/public/images/2019/11/como-hacer-pizza-hawaiana.jpg\",\n            \"description\": \"Pizza Hawwaiana con un montón de piña para el niño y la niña\",\n            \"price\": 25,\n            \"category\": \"Pizzas\",\n            \"quantity\": 1\n        }\n    ],\n    \"total\": 69,\n    \"status\": 2,\n    \"shipped_at\": \"2020-04-02 21:00:54\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/orders/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"orders",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edita el estado de un pedido",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"status\": 2\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/orders/1/status",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"orders",
+										"1",
+										"status"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "articles",
+					"item": [
+						{
+							"name": "listado de artículos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/articles",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"articles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "obtiene un artículo",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/articles/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"articles",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Crea artículo",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiSnVhbiBNYW51ZWwiLCJwcm9maWxlIjoiYWRtaW4iLCJpYXQiOjE1ODg5MzI5NTIsImV4cCI6MTYyMDQ2ODk1Mn0.I3gvUMS0BN-K29A3e5Gap9mhLI-5xdjhtHX-K56j5jQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"title\": \"Artículo de prueba\",\n\t\"slug\": \"articulo-de-prueba\",\n\t\"categories\": [\"Comida\",\"Descuentos\"],\n\t\"tags\": [\"pizzas\",\"foodies\",\"verano\",\"gastrobar\"],\n\t\"image\": \"https://www.hungryhowies.com/sites/default/files/styles/menu_item_280x175/public/images/menu-items/thumbnails/buildyourownpizza_0.png?itok=fgzFck86\",\n\t\"excerpt\": \"Entradilla del artículo de prueba. un poco más corta que el cuerpo y usado en listados.\",\n\t\"body\": \"Descripción de la Cola\",\n\t\"publish_at\": \"2020-03-10 11:11:11\",\n\t\"enabled\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/articles",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"articles"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edita artículo",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\n\t\"body\": \"Cuerpo del artículo. El resto de campos no tienen poruqe especificarse ya que actualizamos sólo lo que cambia\",\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/articles/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"articles",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Elimina artículo",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/articles/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"articles",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "contacts",
+					"item": [
+						{
+							"name": "listado de contactos",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/contacts",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"contacts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "obtiene un contacto",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/contacts/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"contacts",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Crea un contacto",
+							"request": {
+								"auth": {
+									"type": "bearer",
+									"bearer": [
+										{
+											"key": "token",
+											"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6MSwiZmlyc3RuYW1lIjoiSnVhbiBNYW51ZWwiLCJwcm9maWxlIjoiYWRtaW4iLCJpYXQiOjE1ODg5MzI5NTIsImV4cCI6MTYyMDQ2ODk1Mn0.I3gvUMS0BN-K29A3e5Gap9mhLI-5xdjhtHX-K56j5jQ",
+											"type": "string"
+										}
+									]
+								},
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"full_name\": \"Juan Manuel Castillo Andrades\",\n    \"email\": \"juanma@test.es\",\n    \"subject\": \"Asunto del mensaje\",\n    \"message\": \"Cuerpo del mensaje.\",\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/contacts",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"contacts"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edita un contacto",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\n\t\"body\": \"Cuerpo del artículo. El resto de campos no tienen poruqe especificarse ya que actualizamos sólo lo que cambia\",\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/contacts/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"contacts",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Elimina un contacto",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/contacts/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"contacts",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "users",
+					"item": [
+						{
+							"name": "listado de usuarios",
+							"request": {
+								"method": "GET",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/users",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Crea usuario",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"firstname\": \"Juan Manuel\",\n\t\"lastname\": \"Castillo Andrades\",\n\t\"email\": \"eoi@eoi.es\",\n\t\"password\": \"eoi\",\n\t\"phone\": \"666 666 666\",\n\t\"address\": \"C/ ejemplo 1, bajo 1 Sevilla, Sevilla (España)\",\n\t\"profile\": \"admin\",\n\t\"enabled\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/users",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"users"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edita usuario",
+							"request": {
+								"method": "PUT",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"firstname\": \"Juan Manuel\",\n\t\"lastname\": \"Castillo Andrades\",\n\t\"email\": \"juanmanuel@flashexperience.net\",\n\t\"password\": \"eoi\",\n\t\"phone\": \"666 666 555\",\n\t\"address\": \"C/ ejemplo 1, bajo 1 Sevilla, Sevilla (España)\",\n\t\"profile\": \"user\",\n\t\"enabled\": true\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/users/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Edita usuario Copy",
+							"request": {
+								"method": "DELETE",
+								"header": [],
+								"url": {
+									"raw": "http://localhost:8082/users/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"users",
+										"1"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "auth",
+					"item": [
+						{
+							"name": "autentica usuario",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"email\": \"juanma@test.es\",\n\t\"password\": \"test\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/auth/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"auth",
+										"login"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				},
+				{
+					"name": "contacts",
+					"item": [
+						{
+							"name": "Crea contacto",
+							"request": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "raw",
+									"raw": "{\n\t\"name\": \"Juan Manuel Castillo Andrades\",\n\t\"email\": \"juanmanuel@flashexperience.net\",\n\t\"subject\": \"Quiero pizza BBQ pero no funciona la app\",\n\t\"body\": \"NECESITARÍA UNA PIZZA!!!!!!!!\"\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost:8082/contacts",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"port": "8082",
+									"path": [
+										"contacts"
+									]
+								}
+							},
+							"response": []
+						}
+					],
+					"protocolProfileBehavior": {},
+					"_postman_isSubFolder": true
+				}
+			],
+			"protocolProfileBehavior": {}
 		}
 	],
 	"protocolProfileBehavior": {}

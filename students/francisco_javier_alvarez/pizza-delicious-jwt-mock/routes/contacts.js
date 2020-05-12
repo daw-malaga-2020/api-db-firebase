@@ -1,7 +1,17 @@
 'use strict'
-
 const express = require('express')
 const router = express.Router()
+const mongoose = require('mongoose')
+const Schema = mongoose.Schema
+const contactSchema = new Schema({
+    shippingdate: { type: String, required: true, default: Date().toString() },
+    name: { type: String, required: true },
+    subject: { type: String, required: true },
+    message: { type: String, required: true },
+    email: { type: String, required: true }
+})
+
+let Contact = mongoose.model('contacts', contactSchema)
 
 const mailer = require('../modules/mailer')
 const config = require('../modules/config')
@@ -13,55 +23,56 @@ const authMiddleware = require('../middlewares/authentication')
 const methodAllowedOnlyForAdmins = authMiddleware(['admin'], true)
 
 router.route('/contacts')
-  .get(methodAllowedOnlyForAdmins, (req, res) => {
-    let itemList = req.app.get('contacts')
-    res.json(itemList)
-  })
-  .post((req, res) => {
+    .get( /* methodAllowedOnlyForAdmins, */ async(req, res) => {
+        try {
+            let contactList = await Contact.find().exec()
 
-    let itemList = req.app.get('contacts')
-
-    let newItem = { ...{ id: itemList.length + 1 }, ...req.body }
-
-    itemList.push(newItem)
-    req.app.set('contacts', itemList)
-
-    mailer.send(config.ADMIN_EMAIL,config.CONTACT_SUBJECT,config.CONTACT_BODY, false)
-
-    res.status(201).json(newItem)
-  })
+            res.status(201).json(contactList)
+        } catch (err) {
+            console.info(err)
+            res.status(500).json({ 'message': 'No se ha podido realizar la petición.' })
+        }
+    })
+    .post(async(req, res) => {
+        try {
+            let newContact = await new Contact(req.body).save()
+            res.status(201).send(newContact)
+        } catch (err) {
+            console.info(err)
+            res.status(500).json({ 'message': 'o se ha podido resolver la solicitud.' })
+        }
+    })
 
 router.route('/contacts/:id')
-  .get(methodAllowedOnlyForAdmins, (req, res) => {
+    .get( /* methodAllowedOnlyForAdmins, */ async(req, res) => {
+        try {
+            let searchId = req.params.id
+            let foundContact = await Contact.findById(searchId)
 
-    let itemList = req.app.get('contacts')
-    let searchId = parseInt(req.params.id)
+            if (!foundContact) {
+                res.status(404).json({ 'message': 'El elemento que buscas no existe.' })
+                return
+            }
 
-    let foundItem = itemList.find(item => item.id === searchId)
+            res.json(foundContact)
+        } catch (err) {
+            console.info(err)
+            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
+        }
+    })
+    .delete( /* methodAllowedOnlyForAdmins, */ async(req, res) => {
+        try {
+            let searchId = req.params.id
+            let foundContact = await Contact.findOneAndDelete({ _id: searchId })
 
-    if (!foundItem) {
-      res.status(404).json({ 'message': 'El elemento que intentas obtener no existe' })
-      return
-    }
-
-    res.json(foundItem)
-  })
-  .delete(methodAllowedOnlyForAdmins, (req, res) => {
-
-    let itemList = req.app.get('contacts')
-    let searchId = parseInt(req.params.id)
-
-    let foundItemIndex = itemList.findIndex(item => item.id === searchId)
-
-    if (foundItemIndex === -1) {
-      res.status(404).json({ 'message': 'El elemento que intentas eliminar no existe' })
-      return
-    }
-
-    itemList.splice(foundItemIndex, 1)
-    req.app.set('contacts', itemList)
-
-    res.status(204).json()
-  })
+            if (foundContact.deletedCount === 0) {
+                res.status(404).json({ 'message': 'El producto que quieres borrar no está.' })
+                return
+            }
+            res.status(204).json()
+        } catch (err) {
+            res.status(500).json({ 'message': 'No se ha podido resolver la solicitud.' })
+        }
+    })
 
 module.exports = router
